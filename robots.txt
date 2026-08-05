@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lfenomenal.github.io/era-vidanjare-site/sitemap.xml
