@@ -9,31 +9,40 @@
   // Apelul de probă cu asistentul (agent ElevenLabs, în browser, cu microfonul). Cât `id` e gol, butoanele duc la
   // apelul înregistrat de mai jos. Agentul se face cu agent/sync.mjs (vezi agent/README.md); prețurile i le trimitem de aici.
   var AGENT = { id: 'agent_6101m5x2kds2exw8dbrc26dh9zn1', sdk: 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.28.0/+esm' };
-  // Adresa care primește formularul „te sunăm noi". Goală = formularul spune că pornește la lansare.
-  var CALLBACK_URL = null;
-  // PREȚURI PROVIZORII — de înlocuit cu tarifele reale ale partenerilor.
+  // Adresa care primește programările online. Goală = formularul spune că pornește la lansare și nu trimite nimic.
+  var BOOKING_URL = null;
+  // PREȚURILE EuroVid (lei), de la Mircea, 27 oct 2026. Tot de aici le primește și agentul, la fiecare apel.
+  var TRANSPORT = 1600;   // pe cursă: echipa, autovidanja și dusul reziduurilor la eliminare
+  var MAX_M3 = 10;        // cât ia o autovidanjă la o cursă
+  var MIN_ORE = 2;        // desfundare, decolmatare, inspecție video
   var SERVICES = [
-    { id: 'fosa', name: 'Fosă septică', desc: 'Golire completă, cu transportul și descărcarea la stația de epurare.', base: 300, perM3: 25 },
-    { id: 'bazin', name: 'Bazin vidanjabil', desc: 'Pentru casele fără canalizare. Poți cere golire la dată fixă, în fiecare lună.', base: 300, perM3: 25 },
-    { id: 'grasimi', name: 'Separator de grăsimi', desc: 'Pentru restaurante, cantine și spălătorii auto.', base: 400, perM3: 40 },
-    { id: 'canal', name: 'Desfundare canalizare', desc: 'Cu jet de apă sub presiune, pentru țevi și cămine înfundate.', flat: 350 }
+    { id: 'fosa', name: 'Fosă septică', unit: 'm3', rate: 350 },
+    { id: 'grasimi', name: 'Separator de grăsimi', unit: 'm3', rate: 800 },
+    { id: 'hidrocarburi', name: 'Separator de hidrocarburi', unit: 'm3', rate: 1800 },
+    { id: 'desfundare', name: 'Desfundare', unit: 'ora', rate: 600 },
+    { id: 'decolmatare', name: 'Spălare și decolmatare', unit: 'ora', rate: 1000 },
+    { id: 'cctv', name: 'Inspecție video', unit: 'ora', rate: 1000 }
   ];
+  var CLIENT = {
+    pf: 'Persoane fizice: venim pe o rază de 100 km (mai departe, când strângem cel puțin 5 vidanjări în zonă). Primești nota de comandă pe SMS și plătești online.',
+    pj: 'Firme: venim pe o rază de 200 km. Primești factură, cu plata în 5 zile.'
+  };
   // Apelul demonstrativ: asistentul = vocea Microsoft Alina, clientul = Mircea (înregistrat de el; voice/mix2.py).
   // Timpii replicilor (secunde) și forma de undă sunt cei din înregistrare; cu `audio` gol, replicile apar doar ca text.
   var CALL = {
-    audio: 'media/apel.mp3?v=3',
-    length: 35.3,
+    audio: 'media/apel.mp3?v=4',
+    length: 37.3,
     lines: [
       { who: 'ai', at: 0.5, text: 'Bună ziua, EuroVid aici. Cu ce vă pot ajuta?' },
       { who: 'cl', at: 5.02, text: 'Bună ziua. Am o fosă septică de vreo 6 metri cubi, în Ploiești, pe strada Florilor.' },
-      { who: 'ai', at: 12.25, text: 'Vă pot trimite un echipaj chiar azi, la 10:30. Pentru 6 m³, prețul este 450 de lei, cu transport inclus. Confirmați programarea?' },
-      { who: 'cl', at: 24.16, text: 'Da, confirm.' },
-      { who: 'ai', at: 26.16, text: 'Gata, sunteți programat. Ion ajunge la 10:30, iar acum vă trimit un SMS cu numărul lui. O zi bună!' }
+      { who: 'ai', at: 12.25, text: 'Vă pot trimite un echipaj chiar azi, la 10:30. Pentru 6 m³, prețul este 3.700 de lei, cu transportul inclus. Confirmați programarea?' },
+      { who: 'cl', at: 24.21, text: 'Da, confirm.' },
+      { who: 'ai', at: 26.21, text: 'Gata, sunteți programat. Ion ajunge la 10:30. Acum vă trimit pe SMS nota de comandă și linkul de plată. O zi bună!' }
     ],
-    wave: [58, 100, 86, 56, 25, 80, 56, 22, 72, 85, 82, 89, 84, 77, 87, 81, 79, 37, 91, 79, 63, 76, 70, 19, 70, 83, 73, 70, 81, 61, 64, 21, 72, 77, 70, 61, 84, 28, 64, 69, 84, 26, 69, 100, 72, 62, 86, 80, 67, 18, 84, 20],
-    quoteAt: 18.5, confirmAt: 24.6, departAt: 28
+    wave: [77, 98, 94, 35, 64, 80, 38, 22, 97, 75, 100, 87, 83, 84, 89, 86, 47, 95, 83, 66, 82, 69, 18, 91, 67, 87, 81, 63, 80, 46, 60, 83, 81, 46, 92, 36, 66, 74, 87, 24, 83, 97, 75, 33, 84, 95, 82, 78, 70, 18, 87, 26],
+    quoteAt: 18.5, confirmAt: 24.7, departAt: 28
   };
-  var WHO = { ai: 'Asistentul EuroVid', cl: 'Client' };
+  var SPEAKER = { ai: 'Asistentul EuroVid', cl: 'Client' };
 
   var doc = document.documentElement;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -78,35 +87,6 @@
       // pornește în același clic: telefoanele lasă sunetul să meargă doar așa
       if (!player.playing) startCall();
     });
-  });
-
-  /* ---------- „Te sunăm noi" ---------- */
-  var cbOpen = $('[data-callback-open]');
-  var cbForm = $('[data-callback-form]');
-  var cbMsg = $('[data-callback-msg]');
-  cbOpen.addEventListener('click', function () {
-    cbForm.hidden = false;
-    $('input', cbForm).focus();
-  });
-  cbForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var raw = $('input', cbForm).value.replace(/[\s.\-()]/g, '');
-    cbMsg.hidden = false;
-    if (!/^(\+?40|0)7\d{8}$/.test(raw)) {
-      cbMsg.textContent = 'Scrie un număr de mobil, de forma 07xx xxx xxx.';
-      return;
-    }
-    if (!CALLBACK_URL) {
-      cbMsg.textContent = 'Formularul pornește la lansare. Până atunci, ascultă cum decurge un apel cu asistentul.';
-      return;
-    }
-    cbMsg.textContent = 'Se trimite…';
-    fetch(CALLBACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ telefon: raw }) })
-      .then(function (r) {
-        if (!r.ok) throw new Error(String(r.status));
-        cbMsg.textContent = 'Gata. Te sunăm în cel mult un minut.';
-      })
-      .catch(function () { cbMsg.textContent = 'Nu s-a trimis. Încearcă din nou peste câteva secunde.'; });
   });
 
   /* ---------- Harta ---------- */
@@ -160,7 +140,7 @@
 
     var homeMarker = L.marker(home, {
       icon: divIcon('<div class="home"><span class="radar"></span><i class="pulse"></i><i class="dot"></i><span class="tag">Tu · Str. Florilor 12</span>' +
-        '<div class="ticket"><small>Fosă septică · 6 m³</small><b>450 <span>lei</span></b><p>Azi, 10:30 · vine Ion</p><p class="ok">Programare confirmată</p></div></div>'),
+        '<div class="ticket"><small>Fosă septică · 6 m³</small><b>3.700 <span>lei</span></b><p>Azi, 10:30 · vine Ion</p><p class="ok">Programare confirmată</p></div></div>'),
       zIndexOffset: 1000, interactive: false, keyboard: false
     }).addTo(map);
     homeEl = homeMarker.getElement();
@@ -406,7 +386,7 @@
     var p = document.createElement('p');
     p.className = 'cc-line ' + l.who;
     var s = document.createElement('small');
-    s.textContent = l.label || WHO[l.who];
+    s.textContent = l.label || SPEAKER[l.who];
     p.appendChild(s);
     p.appendChild(document.createTextNode(l.text));
     return p;
@@ -499,12 +479,24 @@
     if (!live.sdk) live.sdk = import(AGENT.sdk);
     return live.sdk;
   }
+  // prețurile pentru agent, din aceleași constante ca pagina; prima linie bate exemplele vechi din prompt până la sync
   function preturi() {
-    return SERVICES.map(function (s) {
-      return s.flat
-        ? s.name + ': ' + s.flat + ' lei, preț fix. ' + s.desc
-        : s.name + ': ' + s.base + ' lei plus ' + s.perM3 + ' lei pe metru cub. ' + s.desc;
-    }).join('\n');
+    var ex = SERVICES[0], ore = SERVICES[3];
+    return [
+      'ACESTEA SUNT PREȚURILE ACTUALE ȘI ÎNLOCUIESC ORICE ALT PREȚ, EXEMPLU SAU REGULĂ DE CALCUL DIN INSTRUCȚIUNI.',
+      'Transport: ' + TRANSPORT + ' lei pe fiecare cursă (echipa, autovidanja și dusul reziduurilor la eliminare). O autovidanjă ia cel mult ' + MAX_M3 + ' metri cubi la o cursă; ce trece peste se face cu încă o cursă și încă un transport.'
+    ].concat(SERVICES.map(function (s) {
+      return s.unit === 'm3'
+        ? 'Vidanjare ' + s.name.toLowerCase() + ': ' + s.rate + ' lei pe metru cub.'
+        : s.name + ': ' + s.rate + ' lei pe oră, minim ' + MIN_ORE + ' ore.';
+    })).concat([
+      'Calcul la vidanjare: curse × ' + TRANSPORT + ' + metri cubi × prețul pe metru cub. Exemplu: ' + ex.name.toLowerCase() + ' de 6 metri cubi = ' + TRANSPORT + ' + 6 × ' + ex.rate + ' = ' + quote(ex, 6).total + ' de lei.',
+      'Calcul la desfundare, decolmatare și inspecție video: un transport de ' + TRANSPORT + ' lei + ore × prețul pe oră, minim ' + MIN_ORE + ' ore; ce trece peste se adaugă. Exemplu: desfundare 2 ore = ' + quote(ore, 2).total + ' de lei.',
+      'Reparații, înlocuiri de fose sau bazine, igienizarea subsolurilor și întreținerea canalizării: preț după evaluare la fața locului; nu dai o sumă.',
+      CLIENT.pf.replace('Primești', 'Primesc').replace('plătești', 'plătesc'),
+      CLIENT.pj.replace('Primești', 'Primesc'),
+      'Abonament anual, doar pentru persoane fizice: 3500 de lei pe an, 3 intervenții (vidanjare sau desfundare) plus un tratament cu enzime.'
+    ]).join('\n');
   }
   function acum() {
     try {
@@ -628,64 +620,101 @@
   // biblioteca se încarcă din timp: pe iPhone sunetul trebuie deblocat chiar la atingerea butonului
   if (liveReady()) window.addEventListener('load', function () { setTimeout(function () { loadSdk().catch(function () { live.failed = true; }); }, 1200); });
 
-  /* ---------- Ce vidanjăm + prețuri ---------- */
-  function price(s, m3) { return s.flat || s.base + s.perM3 * m3; }
-  var list = $('[data-svc-list]');
-  SERVICES.forEach(function (s) {
-    var li = document.createElement('li');
-    li.className = 'svc';
-    li.innerHTML = '<h3></h3><p></p><span class="svc-price">de la <b></b></span>';
-    $('h3', li).textContent = s.name;
-    $('p', li).textContent = s.desc;
-    $('b', li).textContent = fmt(price(s, 2)) + ' lei';
-    list.appendChild(li);
-  });
+  /* ---------- Prețuri: calculul ---------- */
+  // vidanjare: transport pe fiecare cursă (max 10 m³ la o cursă) + m³ × tarif
+  // desfundare, decolmatare, inspecție: un transport + ore × tarif, minim 2 ore
+  function quote(s, qty) {
+    if (s.unit === 'm3') {
+      var curse = Math.max(1, Math.ceil(qty / MAX_M3));
+      return { total: curse * TRANSPORT + qty * s.rate, rows: [
+        ['Transport', curse + (curse === 1 ? ' cursă' : ' curse') + ' × ' + fmt(TRANSPORT) + ' lei', curse * TRANSPORT],
+        ['Vidanjare', qty + ' m³ × ' + fmt(s.rate) + ' lei', qty * s.rate]
+      ] };
+    }
+    var ore = Math.max(MIN_ORE, qty);
+    return { total: TRANSPORT + ore * s.rate, rows: [
+      ['Transport echipă', '1 cursă × ' + fmt(TRANSPORT) + ' lei', TRANSPORT],
+      [s.name, ore + ' ore × ' + fmt(s.rate) + ' lei', ore * s.rate]
+    ] };
+  }
 
   var tabs = $('[data-q-tabs]');
-  var m3In = $('[data-q-m3]');
-  var m3Out = $('[data-q-m3-out]');
-  var volEl = $('[data-q-vol]');
+  var qtyIn = $('[data-q-qty]');
+  var qtyOut = $('[data-q-qty-out]');
+  var qtyLabel = $('[data-q-qty-label]');
   var priceEl = $('[data-q-price]');
-  var fromEl = $('[data-q-from]');
+  var breakEl = $('[data-q-break]');
   var metaEl = $('[data-q-meta]');
+  var whoEl = $('[data-q-who]');
   var current = SERVICES[0];
-  var shown = price(current, 6);
-  SERVICES.forEach(function (s, k) {
-    var bt = document.createElement('button');
-    bt.type = 'button';
-    bt.className = 'q-tab';
-    bt.setAttribute('role', 'radio');
-    bt.setAttribute('aria-checked', k === 0 ? 'true' : 'false');
-    bt.tabIndex = k === 0 ? 0 : -1;
-    bt.textContent = s.name;
-    bt.addEventListener('click', function () { pick(s); });
-    bt.addEventListener('keydown', function (e) {
-      var d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
-      if (!d) return;
-      e.preventDefault();
-      var next = SERVICES[(SERVICES.indexOf(current) + d + SERVICES.length) % SERVICES.length];
-      pick(next);
-      tabs.children[SERVICES.indexOf(next)].focus();
+  var who = 'pf';
+  var qty = { m3: 6, ora: MIN_ORE };
+  var shown = quote(current, qty.m3).total;
+
+  // un grup de butoane-radio cu săgeți, ca un selector nativ
+  function radioGroup(box, items, isOn, onPick) {
+    box.textContent = '';
+    items.forEach(function (it, k) {
+      var bt = document.createElement('button');
+      bt.type = 'button';
+      bt.className = 'q-tab';
+      bt.setAttribute('role', 'radio');
+      bt.textContent = it.name;
+      bt.addEventListener('click', function () { onPick(it); });
+      bt.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        var next = items[(k + d + items.length) % items.length];
+        onPick(next);
+        box.children[items.indexOf(next)].focus();
+      });
+      box.appendChild(bt);
     });
-    tabs.appendChild(bt);
+    return function sync() {
+      Array.prototype.forEach.call(box.children, function (bt, k) {
+        var on = isOn(items[k]);
+        bt.setAttribute('aria-checked', on ? 'true' : 'false');
+        bt.tabIndex = on ? 0 : -1;
+      });
+    };
+  }
+  var syncTabs = radioGroup(tabs, SERVICES, function (s) { return s === current; }, function (s) { current = s; syncTabs(); updateQuote(); });
+  $$('button', whoEl).forEach(function (bt) {
+    bt.addEventListener('click', function () { setWho(bt.getAttribute('data-who')); });
+    bt.addEventListener('keydown', function (e) {
+      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].indexOf(e.key) < 0) return;
+      e.preventDefault();
+      setWho(who === 'pf' ? 'pj' : 'pf');
+      $('[data-who="' + who + '"]', whoEl).focus();
+    });
   });
-  function pick(s) {
-    current = s;
-    $$('.q-tab', tabs).forEach(function (bt, k) {
-      var on = SERVICES[k] === s;
+  function setWho(w) {
+    who = w;
+    $$('button', whoEl).forEach(function (bt) {
+      var on = bt.getAttribute('data-who') === w;
       bt.setAttribute('aria-checked', on ? 'true' : 'false');
       bt.tabIndex = on ? 0 : -1;
     });
-    updateQuote();
+    metaEl.textContent = CLIENT[w];
   }
+
   var tween = 0;
   function updateQuote() {
-    var m3 = Number(m3In.value);
-    m3Out.textContent = m3 + ' m³';
-    volEl.hidden = !!current.flat;
-    fromEl.hidden = !current.flat;
-    metaEl.textContent = current.flat ? 'pentru un cămin sau o porțiune de țeavă' : 'transport și descărcare incluse';
-    var to = price(current, m3), from = shown;
+    var u = current.unit;
+    if (u === 'm3') { qtyIn.min = 1; qtyIn.max = 40; } else { qtyIn.min = MIN_ORE; qtyIn.max = 10; }
+    qtyIn.value = qty[u];
+    qtyLabel.textContent = u === 'm3' ? 'Cât ai de vidanjat' : 'Câte ore (minim ' + MIN_ORE + ')';
+    qtyOut.textContent = u === 'm3' ? qty[u] + ' m³' : qty[u] + ' ore';
+    var q = quote(current, qty[u]);
+    breakEl.textContent = '';
+    q.rows.forEach(function (r) {
+      var d = document.createElement('div');
+      var dt = document.createElement('dt'); dt.textContent = r[0];
+      var dd = document.createElement('dd'); dd.textContent = r[1] + ' = ' + fmt(r[2]) + ' lei';
+      d.appendChild(dt); d.appendChild(dd); breakEl.appendChild(d);
+    });
+    var to = q.total, from = shown;
     cancelAnimationFrame(tween);
     if (reduce) { shown = to; priceEl.textContent = fmt(to); return; }
     var t0 = 0;
@@ -697,8 +726,60 @@
       if (k < 1) tween = requestAnimationFrame(stepTween);
     })(performance.now());
   }
-  m3In.addEventListener('input', updateQuote);
+  qtyIn.addEventListener('input', function () { qty[current.unit] = Number(qtyIn.value); updateQuote(); });
+  syncTabs();
+  setWho('pf');
   updateQuote();
+
+  /* ---------- Programare intervenție ---------- */
+  var book = $('[data-book]');
+  var bookMsg = $('[data-book-msg]');
+  var cuiRow = $('[data-b-cui]');
+  var nameLabel = $('[data-b-name-label]');
+  function bookWho() {
+    var pj = $('#b-pj').checked;
+    cuiRow.hidden = !pj;
+    nameLabel.textContent = pj ? 'Numele firmei' : 'Nume și prenume';
+    $('#b-name').autocomplete = pj ? 'organization' : 'name';
+  }
+  $$('input[name="tip"]', book).forEach(function (r) { r.addEventListener('change', bookWho); });
+  bookWho();
+  $$('[data-plan]').forEach(function (a) {
+    a.addEventListener('click', function () { $('#b-pf').checked = true; bookWho(); $('#b-svc').value = 'abonament'; });
+  });
+  function bookError(field, msg) {
+    bookMsg.className = 'b-msg is-err';
+    bookMsg.textContent = msg;
+    field.setAttribute('aria-invalid', 'true');
+    field.focus();
+  }
+  book.addEventListener('input', function (e) { if (e.target.removeAttribute) e.target.removeAttribute('aria-invalid'); });
+  book.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('#b-name'), phone = $('#b-phone'), loc = $('#b-loc'), svc = $('#b-svc');
+    var tel = phone.value.replace(/[\s.\-()]/g, '');
+    if (name.value.trim().length < 3) return bookError(name, $('#b-pj').checked ? 'Scrie numele firmei.' : 'Scrie numele și prenumele.');
+    if (!/^(\+?40|0)\d{9}$/.test(tel)) return bookError(phone, 'Scrie un număr de telefon, de forma 07xx xxx xxx.');
+    if (loc.value.trim().length < 8) return bookError(loc, 'Scrie locația completă: localitatea, strada, numărul.');
+    if (!svc.value) return bookError(svc, 'Alege ce ai nevoie.');
+    if (svc.value === 'abonament' && $('#b-pj').checked) return bookError(svc, 'Abonamentul anual e pentru persoane fizice. Pentru firme, alege intervenția de care ai nevoie.');
+    if (!BOOKING_URL) {
+      bookMsg.className = 'b-msg';
+      bookMsg.textContent = 'Programarea online pornește la lansarea EuroVid. Datele tale nu au fost trimise nicăieri.';
+      return;
+    }
+    bookMsg.className = 'b-msg';
+    bookMsg.textContent = 'Se trimite…';
+    var data = {};
+    new FormData(book).forEach(function (v, k) { data[k] = v; });
+    fetch(BOOKING_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+      .then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        book.reset(); bookWho();
+        bookMsg.textContent = 'Am primit programarea. Te sună asistentul să confirme prețul și ora.';
+      })
+      .catch(function () { bookMsg.className = 'b-msg is-err'; bookMsg.textContent = 'Nu s-a trimis. Încearcă din nou peste câteva secunde.'; });
+  });
 
   /* ---------- Înregistrarea pentru colaboratori: pornește doar când e pe ecran ---------- */
   var webm = document.createElement('video').canPlayType('video/webm; codecs="vp9"') !== '';
