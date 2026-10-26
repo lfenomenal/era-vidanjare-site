@@ -15,19 +15,20 @@
     { id: 'grasimi', name: 'Separator de grăsimi', desc: 'Pentru restaurante, cantine și spălătorii auto.', base: 400, perM3: 40 },
     { id: 'canal', name: 'Desfundare canalizare', desc: 'Cu jet de apă sub presiune, pentru țevi și cămine înfundate.', flat: 350 }
   ];
-  // Apelul demonstrativ. Cu `audio` gol, replicile apar pe rând după timpii de mai jos (secunde);
-  // cu fișier, timpii trebuie să fie cei din înregistrare.
+  // Apelul demonstrativ (voci Microsoft: Alina = asistentul, Emil = clientul; generat cu build/voice/mix.py).
+  // Timpii replicilor (secunde) și forma de undă sunt cei din înregistrare; cu `audio` gol, replicile apar doar ca text.
   var CALL = {
-    audio: null,
-    length: 31,
+    audio: 'media/apel.mp3',
+    length: 33.8,
     lines: [
-      { who: 'ai', at: 0.4, text: 'EuroVid, bună ziua! Cu ce vă pot ajuta?' },
-      { who: 'cl', at: 3.4, text: 'Bună ziua. Am o fosă septică de vreo 6 metri cubi, în Ploiești, pe strada Florilor.' },
-      { who: 'ai', at: 9.4, text: 'Vă pot trimite un echipaj chiar azi, la 10:30. Pentru 6 m³, prețul este 450 de lei, cu transport inclus. Confirmați?' },
-      { who: 'cl', at: 19.4, text: 'Da, confirm.' },
-      { who: 'ai', at: 21.2, text: 'Gata, sunteți programat. Ion ajunge la 10:30, iar acum vă trimit un SMS cu numărul lui. O zi bună!' }
+      { who: 'ai', at: 0.5, text: 'EuroVid, bună ziua! Cu ce vă pot ajuta?' },
+      { who: 'cl', at: 4.72, text: 'Bună ziua. Am o fosă septică de vreo 6 metri cubi, în Ploiești, pe strada Florilor.' },
+      { who: 'ai', at: 11.53, text: 'Vă pot trimite un echipaj chiar azi, la 10:30. Pentru 6 m³, prețul este 450 de lei, cu transport inclus. Confirmați?' },
+      { who: 'cl', at: 22.78, text: 'Da, confirm.' },
+      { who: 'ai', at: 24.66, text: 'Gata, sunteți programat. Ion ajunge la 10:30, iar acum vă trimit un SMS cu numărul lui. O zi bună!' }
     ],
-    quoteAt: 14.5, confirmAt: 20.4, departAt: 28.5
+    wave: [68, 80, 90, 40, 48, 72, 45, 54, 54, 27, 62, 61, 58, 55, 63, 59, 61, 49, 100, 72, 61, 80, 68, 18, 68, 82, 71, 71, 79, 52, 71, 32, 61, 77, 24, 53, 60, 29, 69, 79, 71, 18, 93, 83, 65, 74, 78, 82, 54, 18, 82, 18],
+    quoteAt: 17.6, confirmAt: 23.2, departAt: 26.5
   };
   var WHO = { ai: 'Asistentul EuroVid', cl: 'Client' };
 
@@ -69,7 +70,8 @@
       var card = $('[data-callcard]'), r = card.getBoundingClientRect();
       // pe calculator apelul e deja pe ecran; pe telefon e mai jos și îl aducem în față
       if (r.top < 70 || r.bottom > window.innerHeight) card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
-      setTimeout(function () { if (!player.playing) startCall(); }, reduce ? 0 : 650);
+      // pornește în același clic: telefoanele lasă sunetul să meargă doar așa
+      if (!player.playing) startCall();
     });
   });
 
@@ -173,9 +175,6 @@
       trucks.push(o);
       if (t.id === 'ion') ion = o;
     });
-
-    var free = DATA.trucks.filter(function (t) { return t.state === 'liber'; }).length;
-    $$('[data-free-count]').forEach(function (el) { el.textContent = String(free); });
 
     applyStep(0, false);
     map.on('zoom', sizeRadar);
@@ -380,12 +379,13 @@
   var bars = [];
   for (var i = 0; i < BARS; i++) {
     var b = document.createElement('i');
-    b.style.setProperty('--h', (22 + 78 * Math.abs(Math.sin(i * 0.7) * Math.cos(i * 0.23))).toFixed(0) + '%');
+    b.style.setProperty('--h', (CALL.wave ? CALL.wave[i] : 22 + 78 * Math.abs(Math.sin(i * 0.7) * Math.cos(i * 0.23))).toFixed(0) + '%');
     waveEl.appendChild(b);
     bars.push(b);
   }
   $('[data-call-title]').textContent = CALL.audio ? 'Ascultă un apel' : 'Vezi un apel cu asistentul';
-  $('[data-call-length]').textContent = Math.floor(CALL.length / 60) + ':' + String(CALL.length % 60).padStart(2, '0');
+  var secs = Math.round(CALL.length);
+  $('[data-call-length]').textContent = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
   playBtn.setAttribute('aria-label', CALL.audio ? 'Ascultă apelul' : 'Pornește apelul');
 
   function lineEl(l) {
@@ -434,7 +434,7 @@
       if (map) { heroIon.from = heroIon.t; heroIon.to = 1; heroIon.start = performance.now(); heroIon.dur = reduce ? 1 : 16000; }
     }
     renderWave();
-    if (player.t >= CALL.length) { stopCall(true); return; }
+    if (player.t >= CALL.length || (player.audio && player.audio.ended)) { stopCall(true); return; }
     player.raf = requestAnimationFrame(tickCall);
   }
   function startCall() {
@@ -448,7 +448,7 @@
       if (step === 0) { ion.t = 0; baseLabels(); ion.el.classList.remove('is-arrived'); setRoute(true, 0); }
     }
     if (CALL.audio) {
-      if (!player.audio) player.audio = new Audio(CALL.audio);
+      if (!player.audio) { player.audio = new Audio(CALL.audio); player.audio.preload = 'auto'; }
       player.audio.currentTime = 0;
       var p = player.audio.play();
       if (p && p.catch) p.catch(function () {});
