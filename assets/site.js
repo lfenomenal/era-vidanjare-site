@@ -15,20 +15,20 @@
     { id: 'grasimi', name: 'Separator de grăsimi', desc: 'Pentru restaurante, cantine și spălătorii auto.', base: 400, perM3: 40 },
     { id: 'canal', name: 'Desfundare canalizare', desc: 'Cu jet de apă sub presiune, pentru țevi și cămine înfundate.', flat: 350 }
   ];
-  // Apelul demonstrativ (voci Microsoft: Alina = asistentul, Emil = clientul; generat cu build/voice/mix.py).
+  // Apelul demonstrativ: asistentul = vocea Microsoft Alina, clientul = Mircea (înregistrat de el; voice/mix2.py).
   // Timpii replicilor (secunde) și forma de undă sunt cei din înregistrare; cu `audio` gol, replicile apar doar ca text.
   var CALL = {
-    audio: 'media/apel.mp3',
-    length: 33.8,
+    audio: 'media/apel.mp3?v=2',
+    length: 34.3,
     lines: [
       { who: 'ai', at: 0.5, text: 'EuroVid, bună ziua! Cu ce vă pot ajuta?' },
       { who: 'cl', at: 4.72, text: 'Bună ziua. Am o fosă septică de vreo 6 metri cubi, în Ploiești, pe strada Florilor.' },
-      { who: 'ai', at: 11.53, text: 'Vă pot trimite un echipaj chiar azi, la 10:30. Pentru 6 m³, prețul este 450 de lei, cu transport inclus. Confirmați?' },
-      { who: 'cl', at: 22.78, text: 'Da, confirm.' },
-      { who: 'ai', at: 24.66, text: 'Gata, sunteți programat. Ion ajunge la 10:30, iar acum vă trimit un SMS cu numărul lui. O zi bună!' }
+      { who: 'ai', at: 11.95, text: 'Vă pot trimite un echipaj chiar azi, la 10:30. Pentru 6 m³, prețul este 450 de lei, cu transport inclus. Confirmați?' },
+      { who: 'cl', at: 23.19, text: 'Da, confirm.' },
+      { who: 'ai', at: 25.19, text: 'Gata, sunteți programat. Ion ajunge la 10:30, iar acum vă trimit un SMS cu numărul lui. O zi bună!' }
     ],
-    wave: [68, 80, 90, 40, 48, 72, 45, 54, 54, 27, 62, 61, 58, 55, 63, 59, 61, 49, 100, 72, 61, 80, 68, 18, 68, 82, 71, 71, 79, 52, 71, 32, 61, 77, 24, 53, 60, 29, 69, 79, 71, 18, 93, 83, 65, 74, 78, 82, 54, 18, 82, 18],
-    quoteAt: 17.6, confirmAt: 23.2, departAt: 26.5
+    wave: [76, 87, 100, 40, 62, 75, 48, 22, 84, 80, 88, 78, 84, 80, 85, 81, 78, 40, 89, 81, 64, 71, 75, 33, 62, 82, 69, 75, 76, 57, 74, 36, 30, 85, 34, 73, 77, 21, 69, 76, 76, 21, 82, 96, 69, 71, 80, 84, 60, 18, 84, 18],
+    quoteAt: 18, confirmAt: 23.6, departAt: 27
   };
   var WHO = { ai: 'Asistentul EuroVid', cl: 'Client' };
 
