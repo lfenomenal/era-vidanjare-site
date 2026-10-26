@@ -123,7 +123,7 @@ p { margin: 0; }
   .hero-video { object-position: 84% 50%; }
   .hero-shade {
     background:
-      linear-gradient(0deg, rgba(16, 21, 27, 0.9) 0%, rgba(16, 21, 27, 0.72) 42%, rgba(16, 21, 27, 0) 72%),
+      linear-gradient(0deg, rgba(16, 21, 27, 0.92) 0%, rgba(16, 21, 27, 0.78) 50%, rgba(16, 21, 27, 0.35) 70%, rgba(16, 21, 27, 0) 86%),
       linear-gradient(180deg, rgba(16, 21, 27, 0.45) 0%, rgba(16, 21, 27, 0) 16%);
   }
 }
@@ -132,14 +132,20 @@ p { margin: 0; }
   width: min(100%, var(--max)); margin: 0 auto;
   padding: 0 var(--gutter) clamp(5.5rem, 13vh, 9rem);
 }
+/* rândurile sunt rupte de mână; nu le lăsăm să se mai rupă o dată (altfel rămâne „la" singur) */
 .hero-title {
-  font-size: clamp(2.6rem, 5.4vw, 5.2rem);
+  font-size: clamp(2.4rem, min(4.2vw, 7.6vh), 5rem);
   line-height: 0.97; letter-spacing: -0.025em;
   font-variation-settings: 'wdth' 118; font-weight: 850;
-  max-width: 12ch;
 }
-/* textul stă jos-stânga, pe drumul gol; autovidanja și omul rămân libere în dreapta */
-@media (min-width: 901px) { .hero-copy > * { max-width: min(40rem, 46vw); } }
+.hero-title .line { white-space: nowrap; }
+@media (max-width: 600px) { .hero-title { font-size: clamp(1.9rem, 9.6vw, 2.8rem); } }
+/* textul stă jos-stânga, pe drumul gol, lipit de marginea ecranului (nu centrat), ca să nu ajungă
+   pe autovidanjă nici pe ecranele late; autovidanja și omul rămân libere în dreapta */
+@media (min-width: 901px) {
+  .hero-copy { width: 100%; margin: 0; padding-left: clamp(2rem, 5vw, 6rem); }
+  .hero-lead, .hero-actions { max-width: min(36rem, 44vw); }
+}
 
 /* grăunte de film, ca strat (nu ars în video, ca fișierul să rămână mic) */
 .hero-grain {
@@ -264,21 +270,26 @@ p { margin: 0; }
 }
 .frame-phone .frame-screen { aspect-ratio: 390 / 844; border-radius: 36px; }
 
+/* clipurile din pași apar doar pe telefon (pe desktop e scena lipită din dreapta) */
+.step-media { display: none; }
+
+/* Telefon și tabletă: fără scenă lipită. Fiecare oră are clipul ei dedesubt, pornește când intră în ecran. */
 @media (max-width: 900px) {
-  .day-grid { grid-template-columns: 1fr; }
-  /* pe telefon: ecranul stă sus, pe fundal plin; textul pasului urcă dedesubt */
-  .day-stage {
-    order: -1; position: sticky; top: 3.4rem; z-index: 3; height: 50vh;
-    background: linear-gradient(180deg, var(--ceata) 86%, rgba(232, 236, 239, 0));
-    margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter);
+  .day-grid { display: block; }
+  .day-stage { display: none; }
+  .step {
+    min-height: 0; display: block; padding: 0 0 4rem 1.15rem;
+    color: var(--asfalt);
   }
-  .stage-sticky { position: relative; height: 47vh; }
-  .frame-phone { width: auto; height: 45vh; aspect-ratio: 390 / 844; padding: 7px; border-radius: 30px; }
-  .frame-phone .frame-screen { height: 100%; border-radius: 24px; }
-  .frame-desk { width: 100%; }
-  .step { min-height: 70vh; justify-content: flex-end; padding-bottom: 7vh; }
-  .step::before { top: auto; bottom: calc(7vh + 0.4rem); translate: 0 0; }
-  .step.is-active::before { height: 8.5rem; }
+  .step::before { top: 0.3rem; translate: 0 0; height: 1.5rem; }
+  .step.is-active::before { height: 1.5rem; }
+  .step time { color: var(--vesta-apasat); }
+  .step p { color: #3B4651; }
+  .step-media { display: block; margin: 1.5rem 0 0; opacity: 1; transform: none; }
+  .step-media .frame-screen video { opacity: 1; }
+  .step-media.frame-desk { width: 100%; }
+  .step-media.frame-phone { width: min(66vw, 290px); margin-inline: auto; padding: 8px; border-radius: 34px; }
+  .step-media.frame-phone .frame-screen { border-radius: 27px; }
 }
 
 /* ---------- La birou ---------- */
@@ -295,6 +306,11 @@ p { margin: 0; }
 }
 .office-shot { aspect-ratio: 16 / 9; position: relative; }
 .office-shot img { position: absolute; top: 0; left: 0; width: 100%; transform: translateY(var(--pan, 0%)); will-change: transform; }
+/* pe telefon și tabletă: imaginea întreagă, fără plimbare (pe telefon doar cardul raportului, ca să se citească) */
+@media (max-width: 900px) {
+  .office-shot { aspect-ratio: auto; }
+  .office-shot img { position: static; transform: none; }
+}
 
 /* ---------- Final ---------- */
 .close { padding: clamp(6rem, 14vw, 10rem) var(--gutter); }

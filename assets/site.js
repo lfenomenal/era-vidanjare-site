@@ -3,6 +3,8 @@
   'use strict';
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // pe telefon și tabletă: fără paralaxă și fără scena lipită; fiecare pas are clipul lui
+  var narrow = window.matchMedia('(max-width: 900px)').matches;
   var body = document.body;
 
   /* ---------- Deschiderea: ceața se ridică, titlul urcă ---------- */
@@ -36,8 +38,9 @@
       ticking = false;
       var y = window.scrollY;
       var h = hero ? hero.offsetHeight : 600;
-      if (top) top.classList.toggle('is-solid', y > h * 0.72);
-      if (!reduce && y < h * 1.1) {
+      // pe telefon titlul ar trece pe sub bara transparentă; acolo bara se umple imediat ce începe derularea
+      if (top) top.classList.toggle('is-solid', narrow ? y > 24 : y > h * 0.72);
+      if (!reduce && !narrow && y < h * 1.1) {
         if (heroMedia) heroMedia.style.transform = 'translate3d(0,' + (y * 0.32).toFixed(1) + 'px,0)';
         if (heroCopy) {
           heroCopy.style.transform = 'translate3d(0,' + (y * -0.12).toFixed(1) + 'px,0)';
@@ -108,7 +111,7 @@
     birou: [[0, 1, 50, 50], [1.7, 1.45, 40, 52], [3.6, 1.7, 30, 66], [6.2, 1.45, 78, 46], [9.4, 1.35, 40, 70], [12, 1, 50, 50]]
   };
   function aim(v) {
-    var keys = CAMERA[v.getAttribute('data-clip-video')];
+    var keys = CAMERA[v.getAttribute('data-clip-video') || v.getAttribute('data-cam')];
     if (!keys || reduce) return;
     var k = keys[0];
     for (var i = 0; i < keys.length; i++) if (v.currentTime >= keys[i][0]) k = keys[i];
@@ -135,13 +138,30 @@
   });
 
   var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
-  if ('IntersectionObserver' in window && steps.length) {
+
+  if (narrow) {
+    // Telefon: fiecare pas are clipul lui (fișiere mici, separate). Pornește când e pe ecran, se oprește când iese.
+    var mobile = Array.prototype.slice.call(document.querySelectorAll('.step-media video'));
+    mobile.forEach(function (v) { v.addEventListener('timeupdate', function () { aim(v); }); });
+    if ('IntersectionObserver' in window && !reduce) {
+      var mio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var v = e.target;
+          if (e.isIntersecting) {
+            if (!v.getAttribute('src')) { v.src = v.getAttribute('data-msrc'); v.preload = 'auto'; }
+            var pr = v.play();
+            if (pr && pr.catch) pr.catch(function () {});
+          } else if (!v.paused) {
+            v.pause();
+          }
+        });
+      }, { threshold: 0.45 });
+      mobile.forEach(function (v) { mio.observe(v); });
+    }
+  } else if ('IntersectionObserver' in window && steps.length) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { if (e.isIntersecting) activate(e.target); });
-    }, {
-      // pe telefon textul pasului stă în jumătatea de jos (sus e ecranul), deci linia de activare coboară
-      rootMargin: window.matchMedia('(max-width: 900px)').matches ? '-72% 0px -24% 0px' : '-48% 0px -48% 0px'
-    });
+    }, { rootMargin: '-48% 0px -48% 0px' });
     steps.forEach(function (s) { io.observe(s); });
 
     // Încarcă clipurile din timp, când secțiunea se apropie.
@@ -153,15 +173,13 @@
       }
     }, { rootMargin: '900px 0px' });
     if (day) pre.observe(day);
-  } else if (steps[0]) {
-    activate(steps[0]);
   }
-  if (steps[0]) activate(steps[0]);
+  if (!narrow && steps[0]) activate(steps[0]);
 
   /* ---------- Fișa din birou: pan lent la derulare ---------- */
   var pan = document.querySelector('[data-pan]');
   function panOffice() {
-    if (!pan || reduce) return;
+    if (!pan || reduce || narrow) return;
     var r = pan.getBoundingClientRect();
     var vh = window.innerHeight;
     var p = (vh - r.top) / (vh + r.height);
