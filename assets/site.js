@@ -6,6 +6,9 @@
   // Numărul real se pune în `tel` (ex. '+40372000000'). Cât e gol, butoanele nu sună nicăieri
   // (0372 000 000 poate fi al cuiva) și duc la apelul demonstrativ.
   var PHONE = { display: '0372 000 000', tel: null };
+  // Apelul de probă cu asistentul (agent ElevenLabs, în browser, cu microfonul). Cât `id` e gol, butoanele duc la
+  // apelul înregistrat de mai jos. Agentul se face cu agent/sync.mjs (vezi agent/README.md); prețurile i le trimitem de aici.
+  var AGENT = { id: 'agent_6101m5x2kds2exw8dbrc26dh9zn1', sdk: 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.28.0/+esm' };
   // Adresa care primește formularul „te sunăm noi". Goală = formularul spune că pornește la lansare.
   var CALLBACK_URL = null;
   // PREȚURI PROVIZORII — de înlocuit cu tarifele reale ale partenerilor.
@@ -66,10 +69,12 @@
     if (PHONE.tel) { a.href = 'tel:' + PHONE.tel; return; }
     a.addEventListener('click', function (e) {
       e.preventDefault();
-      toast('Linia se deschide la lansare. Până atunci, ascultă cum decurge un apel.');
       var card = $('[data-callcard]'), r = card.getBoundingClientRect();
       // pe calculator apelul e deja pe ecran; pe telefon e mai jos și îl aducem în față
       if (r.top < 70 || r.bottom > window.innerHeight) card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+      if (live.status !== 'off') return;
+      if (liveReady()) { startLive(); return; }
+      toast('Linia se deschide la lansare. Până atunci, ascultă cum decurge un apel.');
       // pornește în același clic: telefoanele lasă sunetul să meargă doar așa
       if (!player.playing) startCall();
     });
@@ -112,7 +117,8 @@
   var home = DATA && DATA.home;
   var trucks = [];
   var ion = null;
-  var routeAhead, routeDone, homeEl, radarEl, ticketEl;
+  var routeAhead, routeDone, homeEl, radarEl, ticketEl, homeTagEl;
+  var ticketHtml = '', homeTag = ''; // bilețelul și eticheta apelului înregistrat, refăcute după un apel de probă
   var step = 0;          // pasul activ: 0 = deschiderea, 1–5 = „Cum funcționează"
   var heroIon = { t: 0, from: 0, to: 0, start: 0, dur: 0 }; // Ion pornit de apelul din deschidere
 
@@ -160,6 +166,9 @@
     homeEl = homeMarker.getElement();
     radarEl = $('.radar', homeEl);
     ticketEl = $('.ticket', homeEl);
+    homeTagEl = $('.tag', homeEl);
+    ticketHtml = ticketEl.innerHTML;
+    homeTag = homeTagEl.textContent;
 
     DATA.trucks.forEach(function (t) {
       var cls = t.state === 'la o fosă' ? 'is-busy' : t.state === 'pe drum' ? 'is-moving' : 'is-free';
@@ -383,16 +392,21 @@
     waveEl.appendChild(b);
     bars.push(b);
   }
-  $('[data-call-title]').textContent = CALL.audio ? 'Ascultă un apel' : 'Vezi un apel cu asistentul';
+  var titleEl = $('[data-call-title]');
+  var subEl = $('[data-call-length]').parentNode;
+  var okText = okEl.lastChild.textContent;
+  titleEl.textContent = CALL.audio ? 'Ascultă un apel' : 'Vezi un apel cu asistentul';
   var secs = Math.round(CALL.length);
-  $('[data-call-length]').textContent = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
+  $('[data-call-length]').textContent = mmss(secs);
+  var subHtml = subEl.innerHTML;
   playBtn.setAttribute('aria-label', CALL.audio ? 'Ascultă apelul' : 'Pornește apelul');
+  function mmss(s) { return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 
   function lineEl(l) {
     var p = document.createElement('p');
     p.className = 'cc-line ' + l.who;
     var s = document.createElement('small');
-    s.textContent = WHO[l.who];
+    s.textContent = l.label || WHO[l.who];
     p.appendChild(s);
     p.appendChild(document.createTextNode(l.text));
     return p;
@@ -442,7 +456,10 @@
     player.quoted = player.confirmed = player.departed = false;
     linesEl.textContent = '';
     okEl.hidden = true;
+    okEl.lastChild.textContent = okText;
     if (map) {
+      ticketEl.innerHTML = ticketHtml;
+      homeTagEl.textContent = homeTag;
       ticketEl.classList.remove('is-on', 'is-confirmed');
       heroIon.t = 0; heroIon.dur = 0;
       if (step === 0) { ion.t = 0; baseLabels(); ion.el.classList.remove('is-arrived'); setRoute(true, 0); }
@@ -467,7 +484,149 @@
     renderWave();
     if (finished) bars.forEach(function (b) { b.classList.add('on'); });
   }
-  playBtn.addEventListener('click', function () { if (player.playing) stopCall(false); else startCall(); });
+  playBtn.addEventListener('click', function () {
+    if (live.status !== 'off') endLive();
+    else if (player.playing) stopCall(false);
+    else startCall();
+  });
+
+  /* ---------- Apelul de probă: vorbești cu asistentul ---------- */
+  var live = { status: 'off', conv: null, sdk: null, failed: false, t0: 0, raf: 0, last: 0, shownSec: -1, levels: [] };
+  function liveReady() {
+    return !!(AGENT.id && !live.failed && window.isSecureContext && navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  }
+  function loadSdk() {
+    if (!live.sdk) live.sdk = import(AGENT.sdk);
+    return live.sdk;
+  }
+  function preturi() {
+    return SERVICES.map(function (s) {
+      return s.flat
+        ? s.name + ': ' + s.flat + ' lei, preț fix. ' + s.desc
+        : s.name + ': ' + s.base + ' lei plus ' + s.perM3 + ' lei pe metru cub. ' + s.desc;
+    }).join('\n');
+  }
+  function acum() {
+    try {
+      return new Date().toLocaleString('ro-RO', { timeZone: 'Europe/Bucharest', weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+    } catch (e) { return new Date().toLocaleString('ro-RO'); }
+  }
+  function liveLine(who, text) {
+    linesEl.appendChild(lineEl({ who: who, text: text, label: who === 'cl' ? 'Tu' : null }));
+    while (linesEl.children.length > 3) linesEl.removeChild(linesEl.firstChild);
+  }
+
+  function startLive() {
+    if (player.playing) stopCall(false);
+    live.status = 'connecting';
+    live.shownSec = -1;
+    linesEl.textContent = '';
+    okEl.hidden = true;
+    card.classList.add('is-live', 'has-run');
+    titleEl.textContent = 'Se conectează…';
+    subEl.textContent = 'Apel de probă · nu pleacă nicio mașină';
+    playBtn.setAttribute('aria-label', 'Închide apelul');
+    toast('Apel de probă cu asistentul. Permite microfonul și vorbește ca la telefon.');
+    var best = DATA && DATA.trucks.filter(function (t) { return t.id === 'ion'; })[0];
+    loadSdk().then(function (m) {
+      if (live.status !== 'connecting') return null; // a închis înainte să se conecteze
+      return m.Conversation.startSession({
+        agentId: AGENT.id,
+        connectionType: 'webrtc',
+        dynamicVariables: {
+          preturi: preturi(),
+          acum: acum(),
+          sofer: best ? best.name : 'Ion',
+          minute_sosire: best ? best.toHome.min : 7
+        },
+        clientTools: { arata_comanda: showOrder },
+        onConnect: function () {
+          if (live.status !== 'connecting') return;
+          live.status = 'on';
+          live.t0 = performance.now();
+          titleEl.textContent = 'Vorbești cu asistentul';
+        },
+        onMessage: function (msg) {
+          // când omul tace, ElevenLabs trimite „...” drept replica lui
+          if (msg.message && !/^[\s.…]*$/.test(msg.message)) liveLine(msg.source === 'ai' ? 'ai' : 'cl', msg.message);
+        },
+        onModeChange: function (m) { bars.forEach(function (b) { b.classList.toggle('on', m.mode === 'speaking'); }); },
+        onDisconnect: function (d) { liveEnded(d && d.reason === 'error'); }
+      });
+    }).then(function (conv) {
+      if (!conv) return;
+      live.conv = conv;
+      if (live.status === 'off') { conv.endSession(); return; }
+      live.levels = bars.map(function () { return 0; });
+      live.raf = requestAnimationFrame(tickLive);
+    }).catch(function (err) {
+      liveEnded(true, err && err.name === 'NotAllowedError');
+    });
+  }
+  function endLive() {
+    if (live.conv) live.conv.endSession();
+    else liveEnded(false);
+  }
+  // după apel rămân pe ecran replicile și comanda; butonul revine la apelul înregistrat
+  function liveEnded(failed, noMic) {
+    if (live.status === 'off') return;
+    var wasOn = live.status === 'on';
+    live.status = 'off';
+    live.conv = null;
+    cancelAnimationFrame(live.raf);
+    card.classList.remove('is-live');
+    bars.forEach(function (b, k) {
+      b.classList.remove('on');
+      b.style.setProperty('--h', (CALL.wave ? CALL.wave[k] : 50) + '%');
+    });
+    titleEl.textContent = CALL.audio ? 'Ascultă un apel' : 'Vezi un apel cu asistentul';
+    subEl.innerHTML = subHtml;
+    playBtn.setAttribute('aria-label', CALL.audio ? 'Ascultă apelul' : 'Pornește apelul');
+    if (noMic) { toast('Fără microfon nu putem vorbi. Ascultă cum decurge un apel.'); return; }
+    if (failed && !wasOn) {
+      // asistentul nu răspunde (de ex. s-au terminat minutele de probă): de acum butoanele duc la înregistrare
+      live.failed = true;
+      toast('Asistentul nu e disponibil acum. Ascultă cum decurge un apel.');
+      startCall();
+    }
+  }
+  function tickLive(now) {
+    if (live.status === 'off') return;
+    var c = live.conv;
+    if (live.status === 'on') {
+      var sec = Math.floor((now - live.t0) / 1000);
+      if (sec !== live.shownSec) { live.shownSec = sec; subEl.textContent = 'Apel de probă · ' + mmss(sec); }
+    }
+    if (c && !reduce && now - live.last > 70) {
+      live.last = now;
+      live.levels.push(Math.max(c.getOutputVolume() || 0, c.getInputVolume() || 0));
+      live.levels.shift();
+      bars.forEach(function (b, k) { b.style.setProperty('--h', (14 + 86 * Math.min(1, live.levels[k] * 2.4)).toFixed(0) + '%'); });
+    }
+    live.raf = requestAnimationFrame(tickLive);
+  }
+  // unealta agentului, chemată după ce omul confirmă: comanda apare pe hartă, ca la apelul înregistrat
+  function showOrder(p) {
+    p = p || {};
+    var now = !p.ora || /^acum$/i.test(String(p.ora).trim());
+    var who = (DATA && DATA.trucks.filter(function (t) { return t.id === 'ion'; })[0] || { name: 'Ion' }).name;
+    okEl.lastChild.textContent = 'Programare confirmată · ' + who + (now ? ' pleacă spre tine' : ' vine la ' + p.ora);
+    okEl.hidden = false;
+    if (!map) return;
+    var m3 = Number(p.metri_cubi) || 0;
+    $('small', ticketEl).textContent = (p.serviciu || 'Vidanjare') + (m3 ? ' · ' + m3 + ' m³' : '');
+    $('b', ticketEl).firstChild.textContent = fmt(Number(p.pret_lei) || 0) + ' ';
+    $('p', ticketEl).textContent = (now ? 'Acum' : p.ora) + ' · vine ' + who;
+    if (p.adresa) homeTagEl.textContent = 'Tu · ' + p.adresa;
+    player.quoted = player.confirmed = true;
+    if (step === 0) ticketEl.classList.add('is-on', 'is-confirmed');
+    if (now) {
+      heroIon.t = 0;
+      heroIon.from = 0; heroIon.to = 1; heroIon.start = performance.now(); heroIon.dur = reduce ? 1 : 16000;
+    }
+  }
+  // biblioteca se încarcă din timp: pe iPhone sunetul trebuie deblocat chiar la atingerea butonului
+  if (liveReady()) window.addEventListener('load', function () { setTimeout(function () { loadSdk().catch(function () { live.failed = true; }); }, 1200); });
 
   /* ---------- Ce vidanjăm + prețuri ---------- */
   function price(s, m3) { return s.flat || s.base + s.perM3 * m3; }
