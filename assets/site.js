@@ -18,17 +18,17 @@
   // Apelul demonstrativ: asistentul = vocea Microsoft Alina, clientul = Mircea (înregistrat de el; voice/mix2.py).
   // Timpii replicilor (secunde) și forma de undă sunt cei din înregistrare; cu `audio` gol, replicile apar doar ca text.
   var CALL = {
-    audio: 'media/apel.mp3?v=2',
-    length: 34.3,
+    audio: 'media/apel.mp3?v=3',
+    length: 35.3,
     lines: [
-      { who: 'ai', at: 0.5, text: 'EuroVid, bună ziua! Cu ce vă pot ajuta?' },
-      { who: 'cl', at: 4.72, text: 'Bună ziua. Am o fosă septică de vreo 6 metri cubi, în Ploiești, pe strada Florilor.' },
-      { who: 'ai', at: 11.95, text: 'Vă pot trimite un echipaj chiar azi, la 10:30. Pentru 6 m³, prețul este 450 de lei, cu transport inclus. Confirmați?' },
-      { who: 'cl', at: 23.19, text: 'Da, confirm.' },
-      { who: 'ai', at: 25.19, text: 'Gata, sunteți programat. Ion ajunge la 10:30, iar acum vă trimit un SMS cu numărul lui. O zi bună!' }
+      { who: 'ai', at: 0.5, text: 'Bună ziua, EuroVid aici. Cu ce vă pot ajuta?' },
+      { who: 'cl', at: 5.02, text: 'Bună ziua. Am o fosă septică de vreo 6 metri cubi, în Ploiești, pe strada Florilor.' },
+      { who: 'ai', at: 12.25, text: 'Vă pot trimite un echipaj chiar azi, la 10:30. Pentru 6 m³, prețul este 450 de lei, cu transport inclus. Confirmați programarea?' },
+      { who: 'cl', at: 24.16, text: 'Da, confirm.' },
+      { who: 'ai', at: 26.16, text: 'Gata, sunteți programat. Ion ajunge la 10:30, iar acum vă trimit un SMS cu numărul lui. O zi bună!' }
     ],
-    wave: [76, 87, 100, 40, 62, 75, 48, 22, 84, 80, 88, 78, 84, 80, 85, 81, 78, 40, 89, 81, 64, 71, 75, 33, 62, 82, 69, 75, 76, 57, 74, 36, 30, 85, 34, 73, 77, 21, 69, 76, 76, 21, 82, 96, 69, 71, 80, 84, 60, 18, 84, 18],
-    quoteAt: 18, confirmAt: 23.6, departAt: 27
+    wave: [58, 100, 86, 56, 25, 80, 56, 22, 72, 85, 82, 89, 84, 77, 87, 81, 79, 37, 91, 79, 63, 76, 70, 19, 70, 83, 73, 70, 81, 61, 64, 21, 72, 77, 70, 61, 84, 28, 64, 69, 84, 26, 69, 100, 72, 62, 86, 80, 67, 18, 84, 20],
+    quoteAt: 18.5, confirmAt: 24.6, departAt: 28
   };
   var WHO = { ai: 'Asistentul EuroVid', cl: 'Client' };
 
