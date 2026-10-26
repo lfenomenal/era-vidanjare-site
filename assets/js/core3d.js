@@ -1,5 +1,5 @@
-/* ERA Vidanjare — 3D module core (real 3D projection on canvas, vanilla)
-   Each node is a real platform module, all feeding one central ERA core,
+/* EuroVid — 3D module core (real 3D projection on canvas, vanilla)
+   Each node is a real platform module, all feeding one central EuroVid core,
    with live data pulses flowing between modules and the core. */
 (function () {
   'use strict';
@@ -334,7 +334,7 @@
       ctx.shadowColor = '#4F7DFF'; ctx.shadowBlur = 24; ctx.fill(); ctx.shadowBlur = 0;
       if (!mini) {
         ctx.font = '800 13px Satoshi, system-ui, sans-serif'; ctx.textAlign = 'center';
-        ctx.fillStyle = 'rgba(237,241,255,' + ie + ')'; ctx.fillText('ERA', cx, cy + 28);
+        ctx.fillStyle = 'rgba(237,241,255,' + ie + ')'; ctx.fillText('EuroVid', cx, cy + 28);
       }
 
       for (var rk = rings.length - 1; rk >= 0; rk--) {

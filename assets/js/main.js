@@ -1,4 +1,4 @@
-/* ERA Vidanjare — interactions & animations */
+/* EuroVid — interactions & animations */
 (function () {
   'use strict';
 
