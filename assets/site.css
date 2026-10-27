@@ -53,6 +53,7 @@ img, video { display: block; max-width: 100%; }
 }
 .top.is-solid { background: rgba(7, 10, 14, .9); box-shadow: 0 1px 0 var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 850; font-size: 21px; font-variation-settings: 'wdth' 120; letter-spacing: -.01em; }
+.brand-name { color: var(--green); letter-spacing: .02em; }
 .brand-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--orange); display: grid; place-items: center; }
 .brand-mark svg { width: 24px; height: 24px; fill: var(--ink); }
 .top-nav { display: flex; gap: 28px; margin-left: auto; }
