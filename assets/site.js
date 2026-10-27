@@ -59,6 +59,12 @@
   window.addEventListener('scroll', onTopScroll, { passive: true });
   onTopScroll();
 
+  /* semnul de derulare duce la primul pas, cu tot ecranul pentru el */
+  $('[data-scroll-cue]').addEventListener('click', function (e) {
+    e.preventDefault();
+    window.scrollTo({ top: window.scrollY + $('#cum').getBoundingClientRect().top, behavior: reduce ? 'auto' : 'smooth' });
+  });
+
   /* ---------- Butoanele de apel ---------- */
   $$('[data-phone-display]').forEach(function (el) { el.textContent = PHONE.display; });
   var toastEl = null, toastTimer = 0;
