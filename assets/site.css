@@ -5,16 +5,17 @@
   --line: rgba(255, 255, 255, .1);
   --text: #fff;
   --muted: rgba(255, 255, 255, .7);
-  --orange: #ff6a1a;
-  --orange-soft: #ff9a5c;
   --ink: #10151b;
-  --green: #3ddc97;
-  --green-soft: #8ff3c3;
+  /* verdele din logo: luminos pe noapte (hartă, cifre), închis sub text alb (butoane) */
+  --green: #4fae1f;
+  --green-soft: #a6dd85;
+  --green-deep: #2c8413;
+  --green-deep-hover: #237a10;
   --day: #eef1f4;
   --day-ink: #0e141a;
   --day-muted: #4d5864;
   --day-line: #d5dbe1;
-  --orange-on-light: #b5470e;
+  --green-on-light: #23741a;
   --err-on-light: #c0362c;
   --g: clamp(16px, 3.4vw, 48px);
   --nav-h: 76px;
@@ -36,7 +37,7 @@ ul { padding: 0; list-style: none; }
 a { color: inherit; }
 button { font: inherit; color: inherit; }
 img, video { display: block; max-width: 100%; }
-:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; border-radius: 6px; }
+:focus-visible { outline: 3px solid var(--green-deep); outline-offset: 3px; border-radius: 6px; }
 [hidden] { display: none !important; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .skip { position: absolute; left: 12px; top: -60px; z-index: 50; padding: 10px 14px; border-radius: 10px; background: #fff; color: var(--ink); font-weight: 700; }
@@ -52,10 +53,11 @@ img, video { display: block; max-width: 100%; }
   transition: background-color .25s ease, box-shadow .25s ease;
 }
 .top.is-solid { background: rgba(7, 10, 14, .9); box-shadow: 0 1px 0 var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 850; font-size: 21px; font-variation-settings: 'wdth' 120; letter-spacing: -.01em; }
-.brand-name { color: var(--green); letter-spacing: .02em; }
-.brand-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--orange); display: grid; place-items: center; }
-.brand-mark svg { width: 24px; height: 24px; fill: var(--ink); }
+.brand { display: flex; align-items: center; text-decoration: none; font-weight: 900; font-size: 32px; line-height: 1; font-variation-settings: 'wdth' 112; letter-spacing: -.035em; white-space: nowrap; }
+/* pe noapte, verdele literelor e mai deschis decât în logo-ul tipărit, ca să nu se piardă jos */
+.brand-eur { background: linear-gradient(180deg, #5cbf2a 18%, #2a8a1c 82%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.brand-o { width: .75em; height: .75em; flex: none; margin: 0 .005em 0 -.01em; }
+.brand-vid { color: #fff; }
 .top-nav { display: flex; gap: 28px; margin-left: auto; }
 .top-nav a { text-decoration: none; color: rgba(255, 255, 255, .8); }
 .top-nav a:hover { color: #fff; }
@@ -87,21 +89,21 @@ img, video { display: block; max-width: 100%; }
 .home .pulse { position: absolute; left: -40px; top: -40px; width: 80px; height: 80px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, .55); animation: pulse 2.6s ease-out infinite; }
 @keyframes pulse { from { transform: scale(.25); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
 .radar { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0;
-  background: radial-gradient(circle, rgba(255, 106, 26, 0) 55%, rgba(255, 106, 26, .16) 100%); box-shadow: inset 0 0 0 1.5px rgba(255, 106, 26, .7); pointer-events: none; }
+  background: radial-gradient(circle, rgba(79, 174, 31, 0) 55%, rgba(79, 174, 31, .16) 100%); box-shadow: inset 0 0 0 1.5px rgba(79, 174, 31, .7); pointer-events: none; }
 .radar.is-on { animation: radar 3.2s cubic-bezier(.2, .7, .3, 1) infinite; }
 @keyframes radar { 0% { transform: translate(-50%, -50%) scale(.05); opacity: 1; } 70% { opacity: .9; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
 .tag { position: absolute; left: 22px; top: -13px; font: 600 12px/1 Archivo, sans-serif; color: #fff; background: rgba(10, 14, 19, .78); padding: 7px 9px; border-radius: 8px; white-space: nowrap; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); transition: opacity .35s ease; }
 .home .tag { left: 28px; top: -14px; font-size: 13px; }
-.truck .dot { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--orange); border: 2.5px solid #fff; box-shadow: 0 0 0 7px rgba(255, 106, 26, .2), 0 0 26px 8px rgba(255, 106, 26, .45); transition: opacity .4s ease, background-color .4s ease, box-shadow .4s ease; }
+.truck .dot { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--green); border: 2.5px solid #fff; box-shadow: 0 0 0 7px rgba(79, 174, 31, .2), 0 0 26px 8px rgba(79, 174, 31, .45); transition: opacity .4s ease, background-color .4s ease, box-shadow .4s ease; }
 .truck.is-busy .dot { background: #5d6a75; box-shadow: 0 0 0 6px rgba(140, 155, 168, .14); }
 .truck.is-best .dot { width: 22px; height: 22px; left: -11px; top: -11px; }
-.truck.is-best .tag { color: var(--ink); background: var(--orange); font-weight: 750; font-size: 13px; box-shadow: 0 10px 24px -8px rgba(255, 106, 26, .8); left: 24px; }
-.truck.is-arrived .tag { background: var(--green); }
+.truck.is-best .tag { color: var(--ink); background: var(--green); font-weight: 750; font-size: 13px; box-shadow: 0 10px 24px -8px rgba(79, 174, 31, .8); left: 24px; }
+.truck.is-arrived .tag { background: var(--green-soft); }
 .map.lbl-off .truck .tag { opacity: 0; }
 .map.only-best .truck:not(.is-best) .dot { opacity: .3; }
 .map.only-best .truck:not(.is-best) .tag { opacity: 0; }
-.route-ahead { stroke: var(--orange); stroke-width: 3; fill: none; stroke-dasharray: 2 9; stroke-linecap: round; filter: drop-shadow(0 0 7px rgba(255, 106, 26, .95)); }
-.route-done { stroke: var(--orange); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 8px rgba(255, 106, 26, .9)); }
+.route-ahead { stroke: var(--green); stroke-width: 3; fill: none; stroke-dasharray: 2 9; stroke-linecap: round; filter: drop-shadow(0 0 7px rgba(79, 174, 31, .95)); }
+.route-done { stroke: var(--green); stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 8px rgba(79, 174, 31, .9)); }
 
 /* bonul cu prețul, lângă casa clientului */
 .ticket { position: absolute; right: 26px; bottom: 22px; width: 214px; padding: 14px 16px; border-radius: 16px; background: rgba(10, 14, 19, .9); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14), 0 24px 50px -18px rgba(0, 0, 0, .9);
@@ -111,7 +113,7 @@ img, video { display: block; max-width: 100%; }
 .ticket b { display: block; margin-top: 2px; font-size: 34px; line-height: 1.05; font-weight: 850; font-variation-settings: 'wdth' 100; font-variant-numeric: tabular-nums; }
 .ticket b span { font-size: 16px; font-weight: 650; }
 .ticket p { margin-top: 6px; font-size: 13px; color: rgba(255, 255, 255, .85); }
-.ticket .ok { display: none; margin-top: 10px; padding: 6px 9px; border-radius: 9px; background: rgba(61, 220, 151, .14); color: var(--green-soft); font-size: 12px; font-weight: 700; }
+.ticket .ok { display: none; margin-top: 10px; padding: 6px 9px; border-radius: 9px; background: rgba(79, 174, 31, .16); color: var(--green-soft); font-size: 12px; font-weight: 700; }
 .ticket.is-confirmed .ok { display: block; }
 
 .map-credit { position: absolute; right: 10px; bottom: 8px; z-index: 3; font-size: 11px; color: rgba(255, 255, 255, .45); }
@@ -131,14 +133,14 @@ img, video { display: block; max-width: 100%; }
 .hero h1 { margin-top: 0; font-size: clamp(2.3rem, 3.9vw, 3.75rem); line-height: 1; font-weight: 850; font-variation-settings: 'wdth' 116; letter-spacing: -.02em; }
 .hero h1 span { display: block; }
 .lead { margin-top: 18px; font-size: clamp(17px, 1.35vw, 19px); line-height: 1.5; color: rgba(255, 255, 255, .76); max-width: 30em; }
-.call { display: inline-flex; align-items: center; gap: 16px; margin-top: 30px; padding: 14px 26px 14px 14px; border-radius: 99px; background: var(--orange); color: var(--ink); text-decoration: none; box-shadow: 0 18px 40px -14px rgba(255, 106, 26, .75); transition: transform .15s ease, box-shadow .15s ease; }
-.call:hover { transform: translateY(-1px); box-shadow: 0 22px 44px -14px rgba(255, 106, 26, .9); }
+.call { display: inline-flex; align-items: center; gap: 16px; margin-top: 30px; padding: 14px 26px 14px 14px; border-radius: 99px; background: var(--green-deep); color: #fff; text-decoration: none; box-shadow: 0 18px 40px -14px rgba(44, 132, 19, .8); transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease; }
+.call:hover { transform: translateY(-1px); background: var(--green-deep-hover); box-shadow: 0 22px 44px -14px rgba(44, 132, 19, .95); }
 .call:active { transform: translateY(1px); }
 .call-ic { width: 52px; height: 52px; flex: none; border-radius: 50%; background: var(--ink); display: grid; place-items: center; }
-.call-ic svg { width: 24px; height: 24px; fill: none; stroke: var(--orange); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.call-ic svg { width: 24px; height: 24px; fill: none; stroke: var(--green); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .call-txt b { display: block; font-size: 26px; line-height: 1.15; font-weight: 850; font-variation-settings: 'wdth' 110; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
 .call-txt span { font-size: 14px; font-weight: 600; }
-.note { margin-top: 12px; font-size: 14px; color: var(--orange-soft); }
+.note { margin-top: 12px; font-size: 14px; color: var(--green-soft); }
 .callback { margin-top: 16px; font-size: 14px; color: rgba(255, 255, 255, .62); }
 .callback a { color: #fff; text-underline-offset: 3px; }
 
@@ -153,24 +155,24 @@ img, video { display: block; max-width: 100%; }
 .cc-play svg { width: 20px; height: 20px; fill: var(--ink); }
 .cc-play .i-pause, .callcard.is-playing .cc-play .i-play { display: none; }
 .callcard.is-playing .cc-play .i-pause { display: block; }
-/* apelul de probă: butonul închide, unda urmează vocile (portocaliu = vorbește asistentul) */
+/* apelul de probă: butonul închide, unda urmează vocile (verde = vorbește asistentul) */
 .cc-play .i-end, .callcard.is-live .cc-play .i-play, .callcard.is-live .cc-play .i-pause { display: none; }
 .callcard.is-live .cc-play .i-end { display: block; }
 .callcard.is-live .cc-play { background: #ff4d4f; }
 .callcard.is-live .cc-play svg { fill: #fff; }
 .callcard.is-live .wave i { background: rgba(255, 255, 255, .5); transition: height .08s linear, background-color .2s ease; }
-.callcard.is-live .wave i.on { background: var(--orange); }
+.callcard.is-live .wave i.on { background: var(--green); }
 .wave { display: flex; align-items: center; gap: 3px; height: 34px; margin: 16px 0 4px; }
 .wave i { flex: 1; height: var(--h); border-radius: 2px; background: rgba(255, 255, 255, .22); transition: background-color .2s ease, transform .12s ease; }
-.wave i.on { background: var(--orange); }
+.wave i.on { background: var(--green); }
 .wave i.hot { transform: scaleY(1.35); }
 .cc-lines { display: flex; flex-direction: column; justify-content: flex-end; min-height: 150px; max-height: 260px; overflow: hidden; }
 .cc-line { margin-top: 12px; font-size: 15px; line-height: 1.45; animation: line-in .35s ease both; }
 .cc-line small { display: block; font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, .5); margin-bottom: 3px; }
-.cc-line.ai small { color: var(--orange-soft); }
+.cc-line.ai small { color: var(--green-soft); }
 .cc-line.cl { color: rgba(255, 255, 255, .84); }
 @keyframes line-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.cc-ok { margin-top: 14px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(61, 220, 151, .12); color: var(--green-soft); font-size: 14px; font-weight: 650; }
+.cc-ok { margin-top: 14px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(79, 174, 31, .14); color: var(--green-soft); font-size: 14px; font-weight: 650; }
 .cc-ok svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 
 /* semnul că pagina continuă: harta stă pe loc, deci primul ecran pare să fie tot */
@@ -193,11 +195,11 @@ img, video { display: block; max-width: 100%; }
 .step-long { display: block; min-height: 230vh; padding-top: 30vh; padding-bottom: 30vh; }
 .step-long .step-card { position: sticky; top: 34vh; }
 .step-card { width: min(440px, 100%); padding: 26px 28px 28px; border-radius: 22px; background: var(--panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: inset 0 0 0 1px var(--line), 0 30px 60px -24px rgba(0, 0, 0, .7); }
-.step-n { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--orange); color: var(--orange); font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; }
+.step-n { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--green); color: var(--green); font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; }
 .step-card h2 { margin-top: 16px; font-size: clamp(26px, 2.3vw, 34px); line-height: 1.06; font-weight: 820; font-variation-settings: 'wdth' 112; letter-spacing: -.015em; }
 .step-card p { margin-top: 12px; color: var(--muted); }
 .eta-line { display: block; margin-top: 10px; color: #fff; }
-.eta-line b { color: var(--orange); font-variant-numeric: tabular-nums; }
+.eta-line b { color: var(--green); font-variant-numeric: tabular-nums; }
 
 /* ---------- Servicii, prețuri, abonament, programare (ziua) ---------- */
 .wrap { max-width: 1320px; margin: 0 auto; padding: clamp(72px, 9vw, 120px) var(--g); }
@@ -205,14 +207,19 @@ img, video { display: block; max-width: 100%; }
 .day h2, .prices h2, .plan h2, .book h2 { font-size: clamp(34px, 4vw, 54px); line-height: 1; font-weight: 850; font-variation-settings: 'wdth' 116; letter-spacing: -.02em; text-wrap: balance; }
 .sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 64px; align-items: end; }
 .sec-head p { color: var(--day-muted); font-size: 18px; max-width: 32em; }
-.svc-groups { margin-top: 48px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 32px; }
-.svc-group { min-width: 0; border-top: 2px solid var(--day-ink); padding-top: 14px; }
-.svc-group h3 { font-size: 15px; font-weight: 800; letter-spacing: .02em; color: var(--orange-on-light); }
+.svc-groups { margin-top: 48px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 28px; }
+.svc-group { min-width: 0; display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; padding-bottom: 40px; }
+.svc-ic { align-self: end; width: auto; height: 60px; max-width: 100%; object-fit: contain; object-position: left bottom; }
+.svc-group h3 { margin-top: 18px; padding-top: 14px; border-top: 2px solid var(--day-ink); font-size: 15px; font-weight: 800; letter-spacing: .02em; color: var(--green-on-light); }
 .svc-group ul { margin-top: 6px; }
 .svc-group li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--day-line); font-size: 16px; }
 .svc-group li span { min-width: 0; }
 .svc-group li b { font-weight: 750; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .svc-group li b.ask { font-weight: 500; color: var(--day-muted); }
+/* pe cinci coloane prețul trece sub nume, altfel numele se rup pe trei rânduri */
+@media (min-width: 1101px) {
+  .svc-group li { flex-direction: column; align-items: flex-start; gap: 2px; padding: 11px 0; }
+}
 
 .prices { background: #fff; color: var(--day-ink); }
 .prices-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
@@ -224,7 +231,8 @@ img, video { display: block; max-width: 100%; }
 .tbl td { text-align: right; font-size: 19px; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tbl small { display: block; margin-top: 2px; font-size: 13px; font-weight: 500; color: var(--day-muted); }
 .rules { margin-top: 22px; display: grid; gap: 10px; padding-left: 1.1em; list-style: disc; }
-.rules li::marker, .p-rules li::marker { color: var(--orange); }
+.rules li::marker { color: var(--green-on-light); }
+.p-rules li::marker { color: var(--green); }
 .who-grid { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .who-grid > div { min-width: 0; padding: 20px; border-radius: 18px; background: var(--day); }
 .who-grid h3 { font-size: 18px; font-weight: 800; }
@@ -242,7 +250,7 @@ img, video { display: block; max-width: 100%; }
 .q-vol { margin-top: 22px; }
 .q-vol label { font-size: 14px; font-weight: 650; color: var(--day-muted); }
 .q-range { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
-.q-range input { flex: 1; min-width: 0; accent-color: var(--orange); height: 28px; }
+.q-range input { flex: 1; min-width: 0; accent-color: var(--green-deep); height: 28px; }
 .q-range output { min-width: 4.4em; text-align: right; font-weight: 750; font-variant-numeric: tabular-nums; }
 .q-price { margin-top: 14px; font-weight: 900; font-variation-settings: 'wdth' 72; line-height: .9; letter-spacing: -.02em; }
 .q-price b { font-size: clamp(72px, 7.5vw, 112px); font-weight: 900; font-variant-numeric: tabular-nums; }
@@ -260,7 +268,7 @@ img, video { display: block; max-width: 100%; }
 .plan .fine { font-size: 14px; color: rgba(255, 255, 255, .55); }
 .plan-price { text-align: right; }
 .plan-price p { margin: 0; max-width: none; color: #fff; }
-.plan-price b { font-size: clamp(64px, 7vw, 104px); font-weight: 900; font-variation-settings: 'wdth' 72; line-height: .9; letter-spacing: -.02em; color: var(--orange); font-variant-numeric: tabular-nums; }
+.plan-price b { font-size: clamp(64px, 7vw, 104px); font-weight: 900; font-variation-settings: 'wdth' 72; line-height: .9; letter-spacing: -.02em; color: var(--green); font-variant-numeric: tabular-nums; }
 .plan-price span { font-size: 22px; font-weight: 800; }
 .plan-price .btn { margin-top: 18px; }
 
@@ -272,7 +280,7 @@ img, video { display: block; max-width: 100%; }
 .b-who { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0; padding: 0; border: 0; min-width: 0; }
 .b-who legend { width: 100%; padding: 0; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: var(--day-muted); }
 .b-who label { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; cursor: pointer; }
-.b-who input { width: 18px; height: 18px; accent-color: var(--orange); }
+.b-who input { width: 18px; height: 18px; accent-color: var(--green-deep); }
 .b-row { display: grid; gap: 6px; min-width: 0; align-content: start; }
 .b-wide { grid-column: 1 / -1; }
 .b-row label { font-size: 14px; font-weight: 700; color: var(--day-muted); }
@@ -296,8 +304,8 @@ img, video { display: block; max-width: 100%; }
 .p-rules ul { margin-top: 10px; display: grid; gap: 8px; padding-left: 1.1em; list-style: disc; color: var(--muted); }
 .partners-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
 .btn { display: inline-flex; align-items: center; min-height: 52px; padding: 0 24px; border-radius: 99px; text-decoration: none; font-weight: 700; }
-.btn-orange { background: var(--orange); color: var(--ink); }
-.btn-orange:hover { background: #ff7c33; }
+.btn-green { background: var(--green-deep); color: #fff; }
+.btn-green:hover { background: var(--green-deep-hover); }
 .btn-line { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .6); }
 .btn-line:hover { background: rgba(255, 255, 255, .08); }
 .rec { width: clamp(240px, 24vw, 330px); }
@@ -305,7 +313,8 @@ img, video { display: block; max-width: 100%; }
 .rec figcaption { margin-top: 14px; font-size: 13px; color: rgba(255, 255, 255, .55); }
 
 /* ---------- Final ---------- */
-.end { padding: clamp(72px, 10vw, 128px) var(--g); background: var(--orange); color: var(--ink); text-align: center; }
+.end { padding: clamp(72px, 10vw, 128px) var(--g); background: linear-gradient(180deg, var(--green-deep), #175f12); color: #fff; text-align: center; }
+.end :focus-visible { outline-color: #fff; }
 .end h2 { font-size: clamp(22px, 2.2vw, 30px); font-weight: 750; }
 .end-phone { display: inline-block; margin-top: 8px; text-decoration: none; font-size: clamp(3.4rem, 12.5vw, 11.5rem); line-height: 1; font-weight: 900; font-variation-settings: 'wdth' 68; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .end-phone:hover { text-decoration: underline; text-decoration-thickness: 6px; text-underline-offset: 12px; }
@@ -329,7 +338,7 @@ img, video { display: block; max-width: 100%; }
 
 /* ---------- Telefon și tabletă ---------- */
 @media (max-width: 1100px) {
-  .svc-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .svc-groups { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .top-nav { display: none; }
   .pill { margin-left: auto; }
   .callcard { width: 380px; }
@@ -338,7 +347,8 @@ img, video { display: block; max-width: 100%; }
   :root { --nav-h: 64px; }
   body { font-size: 16px; }
   .top { gap: 12px; }
-  .brand { font-size: 19px; }
+  .brand { font-size: 27px; }
+  .svc-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pill { padding: 9px 14px; font-size: 14px; }
   .pill-long { display: none; }
   .shade { background: linear-gradient(180deg, rgba(5, 8, 11, .97) 0%, rgba(5, 8, 11, .97) 54%, rgba(5, 8, 11, .05) 68%, rgba(5, 8, 11, .5) 100%); }
@@ -378,5 +388,6 @@ img, video { display: block; max-width: 100%; }
 }
 
 @media (max-width: 560px) {
-  .svc-groups { grid-template-columns: 1fr; gap: 28px; }
+  .svc-groups { grid-template-columns: 1fr; }
+  .svc-group { padding-bottom: 32px; }
 }
