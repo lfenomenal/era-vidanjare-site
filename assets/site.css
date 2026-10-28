@@ -204,10 +204,10 @@ img, video { display: block; max-width: 100%; }
 /* ---------- Servicii, prețuri, abonament, programare (ziua) ---------- */
 .wrap { max-width: 1320px; margin: 0 auto; padding: clamp(72px, 9vw, 120px) var(--g); }
 .day { background: var(--day); color: var(--day-ink); }
-.day h2, .prices h2, .plan h2, .book h2 { font-size: clamp(34px, 4vw, 54px); line-height: 1; font-weight: 850; font-variation-settings: 'wdth' 116; letter-spacing: -.02em; text-wrap: balance; }
+.day h2, .plan h2, .book h2 { font-size: clamp(34px, 4vw, 54px); line-height: 1; font-weight: 850; font-variation-settings: 'wdth' 116; letter-spacing: -.02em; text-wrap: balance; }
 .sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 64px; align-items: end; }
 .sec-head p { color: var(--day-muted); font-size: 18px; max-width: 32em; }
-/* cinci carduri egale, ca în logo: iconița, numele, apoi ce intră în serviciu; prețurile sunt doar la „Prețuri” */
+/* cinci carduri egale, ca în logo: iconița, numele, apoi ce intră în serviciu; fără prețuri */
 .svc-groups { margin-top: 48px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
 .svc-group { min-width: 0; display: flex; flex-direction: column; align-items: center; padding: 30px 20px 28px; border-radius: 20px; background: #fff; text-align: center; box-shadow: inset 0 0 0 1px var(--day-line), 0 18px 40px -30px rgba(14, 20, 26, .35); }
 .svc-ic { width: auto; height: 64px; max-width: 100%; object-fit: contain; }
@@ -217,46 +217,8 @@ img, video { display: block; max-width: 100%; }
 .svc-group li { font-size: 15px; line-height: 1.35; color: var(--day-muted); }
 .svc-group li + li { margin-top: 8px; }
 
-.prices { background: #fff; color: var(--day-ink); }
-.prices-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-.tariff .sub { margin-top: 14px; color: var(--day-muted); font-size: 18px; max-width: 34em; }
-.tbl { width: 100%; margin-top: 28px; border-collapse: collapse; }
-.tbl th, .tbl td { padding: 14px 0; border-bottom: 1px solid var(--day-line); text-align: left; vertical-align: baseline; }
-.tbl tr:first-child th, .tbl tr:first-child td { border-top: 2px solid var(--day-ink); }
-.tbl th { padding-right: 16px; font-size: 17px; font-weight: 650; }
-.tbl td { text-align: right; font-size: 19px; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.tbl small { display: block; margin-top: 2px; font-size: 13px; font-weight: 500; color: var(--day-muted); }
-.rules { margin-top: 22px; display: grid; gap: 10px; padding-left: 1.1em; list-style: disc; }
-.rules li::marker { color: var(--green-on-light); }
 .p-rules li::marker { color: var(--green); }
-.who-grid { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.who-grid > div { min-width: 0; padding: 20px; border-radius: 18px; background: var(--day); }
-.who-grid h3 { font-size: 18px; font-weight: 800; }
-.who-grid p { margin-top: 8px; color: var(--day-muted); font-size: 15.5px; }
 .fine { margin-top: 14px; font-size: 14px; color: var(--day-muted); }
-
-.quote { position: sticky; top: calc(var(--nav-h) + 24px); padding: clamp(24px, 3vw, 32px); border-radius: 26px; background: var(--day); }
-.quote h3 { font-size: 22px; font-weight: 800; }
-.q-who { display: inline-flex; margin-top: 16px; padding: 4px; border-radius: 99px; background: #fff; box-shadow: inset 0 0 0 1px var(--day-line); }
-.q-who button { padding: 9px 16px; border: 0; border-radius: 99px; background: none; color: var(--day-muted); font-size: 14px; font-weight: 700; cursor: pointer; }
-.q-who button[aria-checked="true"] { background: var(--day-ink); color: #fff; }
-.q-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.q-tab { padding: 10px 14px; border: 0; border-radius: 99px; background: #fff; color: var(--day-ink); font-size: 14px; font-weight: 650; cursor: pointer; box-shadow: inset 0 0 0 1px var(--day-line); }
-.q-tab[aria-checked="true"] { background: var(--day-ink); color: #fff; box-shadow: none; }
-.q-vol { margin-top: 22px; }
-.q-vol label { font-size: 14px; font-weight: 650; color: var(--day-muted); }
-.q-range { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
-.q-range input { flex: 1; min-width: 0; accent-color: var(--green-deep); height: 28px; }
-.q-range output { min-width: 4.4em; text-align: right; font-weight: 750; font-variant-numeric: tabular-nums; }
-.q-price { margin-top: 14px; font-weight: 900; font-variation-settings: 'wdth' 72; line-height: .9; letter-spacing: -.02em; }
-.q-price b { font-size: clamp(72px, 7.5vw, 112px); font-weight: 900; font-variant-numeric: tabular-nums; }
-.q-price span { font-size: clamp(26px, 2.4vw, 34px); font-weight: 800; }
-.q-break { margin-top: 14px; display: grid; gap: 6px; font-size: 14px; }
-.q-break div { display: flex; justify-content: space-between; gap: 12px; }
-.q-break dt { font-weight: 650; }
-.q-break dd { color: var(--day-muted); text-align: right; font-variant-numeric: tabular-nums; }
-.q-meta { margin-top: 14px; font-size: 14px; color: var(--day-muted); }
-.call-dark { margin-top: 22px; }
 
 .plan { background: var(--ink); color: #fff; }
 .plan-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px 64px; align-items: center; padding-block: clamp(56px, 7vw, 96px); }
@@ -374,12 +336,9 @@ img, video { display: block; max-width: 100%; }
   .stage[data-step="5"] .phone-shot { transform: none; }
   .stage[data-step="5"] .tag { opacity: 0; }
   .ticket { right: auto; left: -107px; bottom: 30px; transform-origin: 50% 100%; }
-  .partners-inner, .sec-head, .prices-grid, .plan-grid, .book-grid, .who-grid { grid-template-columns: 1fr; }
-  .quote { position: static; }
+  .partners-inner, .sec-head, .plan-grid, .book-grid { grid-template-columns: 1fr; }
   .plan-price { text-align: left; }
   .book-form { grid-template-columns: 1fr; }
-  .tbl th { font-size: 15.5px; }
-  .tbl td { font-size: 17px; }
   .rec { width: min(300px, 78vw); margin: 0 auto; }
   .end-phone { font-size: clamp(2.9rem, 15vw, 6rem); }
 }

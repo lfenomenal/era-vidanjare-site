@@ -626,7 +626,7 @@
   // biblioteca se încarcă din timp: pe iPhone sunetul trebuie deblocat chiar la atingerea butonului
   if (liveReady()) window.addEventListener('load', function () { setTimeout(function () { loadSdk().catch(function () { live.failed = true; }); }, 1200); });
 
-  /* ---------- Prețuri: calculul ---------- */
+  /* ---------- Prețuri: calculul, pentru exemplele agentului (pe pagină nu mai apar) ---------- */
   // vidanjare: transport pe fiecare cursă (max 10 m³ la o cursă) + m³ × tarif
   // desfundare, decolmatare, inspecție: un transport + ore × tarif, minim 2 ore
   function quote(s, qty) {
@@ -643,99 +643,6 @@
       [s.name, ore + ' ore × ' + fmt(s.rate) + ' lei', ore * s.rate]
     ] };
   }
-
-  var tabs = $('[data-q-tabs]');
-  var qtyIn = $('[data-q-qty]');
-  var qtyOut = $('[data-q-qty-out]');
-  var qtyLabel = $('[data-q-qty-label]');
-  var priceEl = $('[data-q-price]');
-  var breakEl = $('[data-q-break]');
-  var metaEl = $('[data-q-meta]');
-  var whoEl = $('[data-q-who]');
-  var current = SERVICES[0];
-  var who = 'pf';
-  var qty = { m3: 6, ora: MIN_ORE };
-  var shown = quote(current, qty.m3).total;
-
-  // un grup de butoane-radio cu săgeți, ca un selector nativ
-  function radioGroup(box, items, isOn, onPick) {
-    box.textContent = '';
-    items.forEach(function (it, k) {
-      var bt = document.createElement('button');
-      bt.type = 'button';
-      bt.className = 'q-tab';
-      bt.setAttribute('role', 'radio');
-      bt.textContent = it.name;
-      bt.addEventListener('click', function () { onPick(it); });
-      bt.addEventListener('keydown', function (e) {
-        var d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
-        if (!d) return;
-        e.preventDefault();
-        var next = items[(k + d + items.length) % items.length];
-        onPick(next);
-        box.children[items.indexOf(next)].focus();
-      });
-      box.appendChild(bt);
-    });
-    return function sync() {
-      Array.prototype.forEach.call(box.children, function (bt, k) {
-        var on = isOn(items[k]);
-        bt.setAttribute('aria-checked', on ? 'true' : 'false');
-        bt.tabIndex = on ? 0 : -1;
-      });
-    };
-  }
-  var syncTabs = radioGroup(tabs, SERVICES, function (s) { return s === current; }, function (s) { current = s; syncTabs(); updateQuote(); });
-  $$('button', whoEl).forEach(function (bt) {
-    bt.addEventListener('click', function () { setWho(bt.getAttribute('data-who')); });
-    bt.addEventListener('keydown', function (e) {
-      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].indexOf(e.key) < 0) return;
-      e.preventDefault();
-      setWho(who === 'pf' ? 'pj' : 'pf');
-      $('[data-who="' + who + '"]', whoEl).focus();
-    });
-  });
-  function setWho(w) {
-    who = w;
-    $$('button', whoEl).forEach(function (bt) {
-      var on = bt.getAttribute('data-who') === w;
-      bt.setAttribute('aria-checked', on ? 'true' : 'false');
-      bt.tabIndex = on ? 0 : -1;
-    });
-    metaEl.textContent = CLIENT[w];
-  }
-
-  var tween = 0;
-  function updateQuote() {
-    var u = current.unit;
-    if (u === 'm3') { qtyIn.min = 1; qtyIn.max = 40; } else { qtyIn.min = MIN_ORE; qtyIn.max = 10; }
-    qtyIn.value = qty[u];
-    qtyLabel.textContent = u === 'm3' ? 'Cât ai de vidanjat' : 'Câte ore (minim ' + MIN_ORE + ')';
-    qtyOut.textContent = u === 'm3' ? qty[u] + ' m³' : qty[u] + ' ore';
-    var q = quote(current, qty[u]);
-    breakEl.textContent = '';
-    q.rows.forEach(function (r) {
-      var d = document.createElement('div');
-      var dt = document.createElement('dt'); dt.textContent = r[0];
-      var dd = document.createElement('dd'); dd.textContent = r[1] + ' = ' + fmt(r[2]) + ' lei';
-      d.appendChild(dt); d.appendChild(dd); breakEl.appendChild(d);
-    });
-    var to = q.total, from = shown;
-    cancelAnimationFrame(tween);
-    if (reduce) { shown = to; priceEl.textContent = fmt(to); return; }
-    var t0 = 0;
-    (function stepTween(now) {
-      if (!t0) t0 = now;
-      var k = clamp((now - t0) / 280, 0, 1);
-      shown = from + (to - from) * (1 - Math.pow(1 - k, 3));
-      priceEl.textContent = fmt(shown);
-      if (k < 1) tween = requestAnimationFrame(stepTween);
-    })(performance.now());
-  }
-  qtyIn.addEventListener('input', function () { qty[current.unit] = Number(qtyIn.value); updateQuote(); });
-  syncTabs();
-  setWho('pf');
-  updateQuote();
 
   /* ---------- Programare intervenție ---------- */
   var book = $('[data-book]');

@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/vendor/leaflet.css">
-  <link rel="stylesheet" href="assets/site.css?v=11">
+  <link rel="stylesheet" href="assets/site.css?v=12">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -35,7 +35,6 @@
     <nav class="top-nav" aria-label="Secțiuni">
       <a href="#cum">Cum funcționează</a>
       <a href="#servicii">Servicii</a>
-      <a href="#preturi">Prețuri</a>
       <a href="#abonament">Abonament</a>
       <a href="#programare">Programare</a>
     </nav>
@@ -136,7 +135,7 @@
           <h2 id="servicii-titlu">Ce facem</h2>
           <p>Pentru case, blocuri, restaurante, benzinării și hale. Un singur telefon, pentru tot ce ține de fose și canalizare.</p>
         </div>
-        <!-- cele cinci servicii din logo, cu iconițele lui; prețurile sunt doar la „Prețuri” -->
+        <!-- cele cinci servicii din logo, cu iconițele lui; fără prețuri: prețul îl spune asistentul la telefon -->
         <div class="svc-groups">
           <section class="svc-group" aria-labelledby="g-vid">
             <img class="svc-ic" src="assets/servicii/vidanjare.png" width="162" height="91" alt="">
@@ -182,69 +181,6 @@
               <li>Înlocuire bazine decantoare</li>
             </ul>
           </section>
-        </div>
-      </div>
-    </section>
-
-    <!-- Prețuri + calcul -->
-    <section class="prices" id="preturi" aria-labelledby="preturi-titlu">
-      <div class="wrap prices-grid">
-        <div class="tariff">
-          <h2 id="preturi-titlu">Prețuri</h2>
-          <p class="sub">Plătești transportul fiecărei curse și ce se lucrează efectiv. Știi suma înainte să plece echipajul.</p>
-          <table class="tbl">
-            <caption class="sr">Tarifele EuroVid</caption>
-            <tbody>
-              <tr><th scope="row">Transport<small>echipa, autovidanja și dusul reziduurilor la eliminare</small></th><td>1.600 lei<small>pe cursă</small></td></tr>
-              <tr><th scope="row">Vidanjare fosă septică</th><td>350 lei<small>pe m³</small></td></tr>
-              <tr><th scope="row">Vidanjare separator de grăsimi</th><td>800 lei<small>pe m³</small></td></tr>
-              <tr><th scope="row">Vidanjare separator de hidrocarburi</th><td>1.800 lei<small>pe m³</small></td></tr>
-              <tr><th scope="row">Desfundare</th><td>600 lei<small>pe oră</small></td></tr>
-              <tr><th scope="row">Spălare și decolmatare canalizare</th><td>1.000 lei<small>pe oră</small></td></tr>
-              <tr><th scope="row">Inspecție video CCTV</th><td>1.000 lei<small>pe oră</small></td></tr>
-            </tbody>
-          </table>
-          <ul class="rules">
-            <li>O autovidanjă ia cel mult 10 m³ la o cursă. Ce trece peste se face cu încă o cursă.</li>
-            <li>Desfundarea, decolmatarea și inspecția video se plătesc minim 2 ore. Ce trece peste se adaugă.</li>
-            <li>Reparațiile, înlocuirile și igienizările primesc ofertă după ce vedem locul.</li>
-          </ul>
-          <div class="who-grid">
-            <div>
-              <h3>Persoane fizice</h3>
-              <p>Venim pe o rază de 100 km. Mai departe, când strângem cel puțin 5 vidanjări în zonă, ca mașina să nu meargă degeaba.</p>
-              <p>Primești nota de comandă pe SMS și plătești online.</p>
-            </div>
-            <div>
-              <h3>Firme</h3>
-              <p>Venim pe o rază de 200 km.</p>
-              <p>Primești factură, cu plata în 5 zile.</p>
-            </div>
-          </div>
-          <p class="fine">Dacă plata nu ajunge la termen, primești o notificare.</p>
-        </div>
-
-        <div class="quote" aria-labelledby="calc-titlu">
-          <h3 id="calc-titlu">Calculează</h3>
-          <div class="q-who" role="radiogroup" aria-label="Cine comandă" data-q-who>
-            <button type="button" role="radio" aria-checked="true" data-who="pf">Persoană fizică</button>
-            <button type="button" role="radio" aria-checked="false" data-who="pj" tabindex="-1">Firmă</button>
-          </div>
-          <div class="q-tabs" role="radiogroup" aria-label="Ce ai nevoie" data-q-tabs></div>
-          <div class="q-vol">
-            <label for="q-qty" data-q-qty-label>Cât ai de vidanjat</label>
-            <div class="q-range">
-              <input id="q-qty" type="range" min="1" max="40" step="1" value="6" data-q-qty>
-              <output for="q-qty" data-q-qty-out>6 m³</output>
-            </div>
-          </div>
-          <p class="q-price"><b data-q-price>3.700</b> <span>lei</span></p>
-          <dl class="q-break" data-q-break></dl>
-          <p class="q-meta" data-q-meta></p>
-          <a class="call call-dark" href="#apel" data-call>
-            <span class="call-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span>
-            <span class="call-txt"><b data-phone-display>0372 000 000</b><span>Programează la telefon</span></span>
-          </a>
         </div>
       </div>
     </section>
@@ -389,6 +325,6 @@
 
   <script src="assets/vendor/leaflet.js"></script>
   <script src="assets/routes.js?v=4"></script>
-  <script src="assets/site.js?v=10"></script>
+  <script src="assets/site.js?v=11"></script>
 </body>
 </html>
