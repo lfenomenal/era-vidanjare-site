@@ -1,6 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- EuroVid: „O”-ul din logo, cu frunza -->
-  <defs><linearGradient id="ev-o" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4aa318"/><stop offset=".5" stop-color="#1c7414"/><stop offset="1" stop-color="#023a11"/></linearGradient></defs>
-  <circle cx="50" cy="50" r="50" fill="url(#ev-o)"/>
-  <path fill="#fff" d="M27.5 94C15 83 10 63 15.5 48.5 22.5 32.5 46 20 82 19 83 34 80 50 72 60 63 70 45 75 30 74 32 64 42 52 60 42.5 47 45 34 54 29 63 25 72 24 86 27.5 94Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 104 104">
+  <!-- EuroVid: discul cu frunză, pentru fundal închis -->
+  <g transform="translate(52 52)"><circle r="52" fill="#62C23A"/><path d="M-20 24C-32.9 -6.3 -9.2 -26.1 26 -26C29 9.1 11.3 34.3 -20 24Z" fill="#FFFFFF"/><path d="M-20 24L-29 33" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M-12.5 16.5C-5 9 2 2 9 -6" stroke="#62C23A" stroke-width="3.4" stroke-linecap="round" fill="none"/></g>
 </svg>

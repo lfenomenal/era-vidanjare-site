@@ -53,11 +53,9 @@ img, video { display: block; max-width: 100%; }
   transition: background-color .25s ease, box-shadow .25s ease;
 }
 .top.is-solid { background: rgba(7, 10, 14, .9); box-shadow: 0 1px 0 var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-.brand { display: flex; align-items: center; text-decoration: none; font-weight: 900; font-size: 32px; line-height: 1; font-variation-settings: 'wdth' 112; letter-spacing: -.035em; white-space: nowrap; }
-/* pe noapte, verdele literelor e mai deschis decât în logo-ul tipărit, ca să nu se piardă jos */
-.brand-eur { background: linear-gradient(180deg, #5cbf2a 18%, #2a8a1c 82%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.brand-o { width: .75em; height: .75em; flex: none; margin: 0 .005em 0 -.01em; }
-.brand-vid { color: #fff; }
+.brand { display: flex; align-items: center; text-decoration: none; line-height: 1; }
+/* logo-ul desenat: înălțimea majusculelor ~23 px; verdele mai deschis al logo-ului pentru fundal închis */
+.brand-logo { display: block; height: 24px; width: auto; }
 .top-nav { display: flex; gap: 28px; margin-left: auto; }
 .top-nav a { text-decoration: none; color: rgba(255, 255, 255, .8); }
 .top-nav a:hover { color: #fff; }
@@ -308,7 +306,7 @@ img, video { display: block; max-width: 100%; }
   :root { --nav-h: 64px; }
   body { font-size: 16px; }
   .top { gap: 12px; }
-  .brand { font-size: 27px; }
+  .brand-logo { height: 20px; }
   /* două câte două, ultimul centrat */
   .svc-groups { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .svc-group:nth-child(4) { grid-column: span 2; }
