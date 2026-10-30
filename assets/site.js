@@ -24,7 +24,7 @@
     { id: 'cctv', name: 'Inspecție video', unit: 'ora', rate: 1000 }
   ];
   var CLIENT = {
-    pf: 'Persoane fizice: venim pe o rază de 100 km (mai departe, când strângem cel puțin 5 vidanjări în zonă). Primești nota de comandă pe SMS și plătești online.',
+    pf: 'Persoane fizice: venim pe o rază de 100 km (mai departe, când strângem cel puțin 5 vidanjări în zonă). Primești nota de comandă pe SMS și plătești online, după lucrare.',
     pj: 'Firme: venim pe o rază de 200 km. Primești factură, cu plata în 5 zile.'
   };
   // Apelul demonstrativ: asistentul = vocea Microsoft Alina, clientul = Mircea (înregistrat de el; voice/mix2.py).
@@ -202,7 +202,8 @@
   }
   function go(target, zoom, instant) {
     var c = centerFor(target, zoom);
-    if (instant || reduce) map.setView(c, zoom, { animate: false });
+    // flyTo pe o hartă fără dimensiuni (pagină pornită într-o fereastră ascunsă) dă NaN și oprește tot restul
+    if (instant || reduce || !map.getSize().x) map.setView(c, zoom, { animate: false });
     else map.flyTo(c, zoom, { duration: 1.5, easeLinearity: 0.25 });
   }
   function goBounds(bounds, instant) {
@@ -501,7 +502,8 @@
       'Reparații, înlocuiri de fose sau bazine, igienizarea subsolurilor și întreținerea canalizării: preț după evaluare la fața locului; nu dai o sumă.',
       CLIENT.pf.replace('Primești', 'Primesc').replace('plătești', 'plătesc'),
       CLIENT.pj.replace('Primești', 'Primesc'),
-      'Abonament anual, doar pentru persoane fizice: 3500 de lei pe an, 3 intervenții (vidanjare sau desfundare) plus un tratament cu enzime.'
+      'Prețurile includ TVA. Prețul spus la telefon e estimat; prețul final se face după lucrare, din metrii cubi, cursele și orele reale.',
+      'Abonament anual, doar pentru persoane fizice: 3500 de lei pe an, 3 intervenții (vidanjare sau desfundare) plus un tratament cu enzime. O intervenție acoperă transportul și o cursă, până la ' + MAX_M3 + ' metri cubi, la vidanjarea fosei, sau ' + MIN_ORE + ' ore la desfundare; ce trece peste se plătește după tarif.'
     ]).join('\n');
   }
   function acum() {
