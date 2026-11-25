@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/vendor/leaflet.css">
-  <link rel="stylesheet" href="assets/site.css?v=13">
+  <link rel="stylesheet" href="assets/site.css?v=14">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -234,28 +234,28 @@
             <select id="b-svc" name="serviciu" required>
               <option value="">Alege</option>
               <optgroup label="Vidanjare">
-                <option>Vidanjare fosă septică</option>
-                <option>Vidanjare separator de grăsimi</option>
-                <option>Vidanjare separator de hidrocarburi</option>
+                <option value="vidanjare_fosa">Vidanjare fosă septică</option>
+                <option value="separator_grasimi">Vidanjare separator de grăsimi</option>
+                <option value="separator_hidrocarburi">Vidanjare separator de hidrocarburi</option>
               </optgroup>
               <optgroup label="Desfundare">
-                <option>Desfundare canalizare</option>
-                <option>Desfundare sifoane de pardoseală</option>
-                <option>Desfundare toalete, pisoare, chiuvete</option>
+                <option value="desfundare">Desfundare canalizare</option>
+                <option value="desfundare">Desfundare sifoane de pardoseală</option>
+                <option value="desfundare">Desfundare toalete, pisoare, chiuvete</option>
               </optgroup>
               <optgroup label="Spălare rețele canalizare">
-                <option>Spălare și decolmatare canalizare</option>
-                <option>Întreținere canalizări</option>
+                <option value="spalare_decolmatare">Spălare și decolmatare canalizare</option>
+                <option value="intretinere_canalizare">Întreținere canalizări</option>
               </optgroup>
               <optgroup label="Inspecție video">
-                <option>Inspecție video CCTV</option>
+                <option value="inspectie_cctv">Inspecție video CCTV</option>
               </optgroup>
               <optgroup label="Lucrări de întreținere și reparații">
-                <option>Reparații sisteme sanitare</option>
-                <option>Reparații sisteme de canalizare</option>
-                <option>Igienizare subsoluri</option>
-                <option>Înlocuire fosă septică</option>
-                <option>Înlocuire bazin decantor</option>
+                <option value="reparatii_sanitare">Reparații sisteme sanitare</option>
+                <option value="reparatii_canalizare">Reparații sisteme de canalizare</option>
+                <option value="igienizare_subsol">Igienizare subsoluri</option>
+                <option value="inlocuire_fosa">Înlocuire fosă septică</option>
+                <option value="inlocuire_bazin">Înlocuire bazin decantor</option>
               </optgroup>
               <option value="abonament">Abonament anual (3.500 lei / an)</option>
             </select>
@@ -267,6 +267,16 @@
           <div class="b-row b-wide">
             <label for="b-notes">Detalii (opțional)</label>
             <textarea id="b-notes" name="detalii" rows="2" placeholder="Cam câți metri cubi, ce s-a înfundat, acces pentru autovidanjă"></textarea>
+          </div>
+          <div class="b-wide">
+            <label class="b-consent" for="b-consent">
+              <input type="checkbox" id="b-consent" name="acord" required>
+              <span>Sunt de acord să mă sunați pentru programare și am citit <a href="confidentialitate.html">politica de confidențialitate</a>.</span>
+            </label>
+          </div>
+          <div class="b-trap" aria-hidden="true">
+            <label for="b-website">Nu completa acest câmp</label>
+            <input id="b-website" name="website" tabindex="-1" autocomplete="off">
           </div>
           <div class="b-wide b-send">
             <button type="submit" class="btn btn-green">Trimite programarea</button>
@@ -318,12 +328,14 @@
   <footer class="foot">
     <span>© 2026 EuroVid</span>
     <a href="mailto:contact@eurovid.eu">contact@eurovid.eu</a>
+    <a href="confidentialitate.html">Confidențialitate</a>
+    <a href="termeni.html">Termeni și condiții</a>
     <a href="https://lfenomenal.github.io/era-vidanjare-demo/home/" target="_blank" rel="noopener">Pentru firme: aplicația EuroVid</a>
     <span>Harta de pe pagină e o simulare. Date hartă © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></span>
   </footer>
 
   <script src="assets/vendor/leaflet.js"></script>
   <script src="assets/routes.js?v=4"></script>
-  <script src="assets/site.js?v=12"></script>
+  <script src="assets/site.js?v=13"></script>
 </body>
 </html>

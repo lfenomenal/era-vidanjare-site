@@ -356,3 +356,26 @@ img, video { display: block; max-width: 100%; }
   .svc-group ul::before { display: none; }
   .svc-group li + li { margin-top: 4px; }
 }
+
+/* Paginile legale (confidențialitate, termeni): text lung, pe fond de zi. */
+.legal-page { background: var(--day); color: var(--day-ink); }
+.legal-top { padding: 18px var(--g); background: var(--night); }
+.legal-back { color: #fff; font-weight: 700; text-decoration: none; }
+.legal { max-width: 760px; margin: 0 auto; padding: clamp(32px, 6vw, 64px) var(--g) 72px; }
+.legal h1 { font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; font-stretch: 88%; }
+.legal h2 { margin-top: 34px; font-size: 21px; line-height: 1.25; }
+.legal p, .legal-list { margin-top: 12px; color: var(--day-ink); }
+.legal a { color: var(--green-on-light); }
+.legal-date { color: var(--day-muted); font-size: 15px; }
+.legal-list { list-style: disc; padding-left: 22px; }
+.legal-list li + li { margin-top: 8px; }
+.legal-operator { margin-top: 28px; padding: 18px 20px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px var(--day-line); }
+.legal-operator h2 { margin-top: 0; }
+
+/* Formularul: acordul și câmpul-capcană pentru roboți (ascuns oamenilor). */
+.b-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--day-ink); }
+.b-consent input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--green-deep); }
+.b-consent a { color: var(--green-on-light); }
+.b-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+/* the form's own input rule makes every input full width: not the consent box */
+.book-form .b-consent input { width: 20px; min-height: 0; padding: 0; border-radius: 4px; box-shadow: none; background: none; }

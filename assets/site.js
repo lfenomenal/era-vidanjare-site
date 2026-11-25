@@ -10,6 +10,9 @@
   // apelul înregistrat de mai jos. Agentul se face cu agent/sync.mjs (vezi agent/README.md); prețurile i le trimitem de aici.
   var AGENT = { id: 'agent_6101m5x2kds2exw8dbrc26dh9zn1', sdk: 'https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.28.0/+esm' };
   // Adresa care primește programările online. Goală = formularul spune că pornește la lansare și nu trimite nimic.
+  // Adresa la care pleacă formularul, în aplicație. Se completează la lansare, după ce
+  // aplicația e pe server: 'https://app.eurovid.eu/api/v1/public/bookings'. null = formularul
+  // nu trimite nimic și spune asta.
   var BOOKING_URL = null;
   // PREȚURILE EuroVid (lei), de la Mircea, 27 oct 2026. Tot de aici le primește și agentul, la fiecare apel.
   var TRANSPORT = 1600;   // pe cursă: echipa, autovidanja și dusul reziduurilor la eliminare
@@ -678,6 +681,8 @@
     if (loc.value.trim().length < 8) return bookError(loc, 'Scrie locația completă: localitatea, strada, numărul.');
     if (!svc.value) return bookError(svc, 'Alege ce ai nevoie.');
     if (svc.value === 'abonament' && $('#b-pj').checked) return bookError(svc, 'Abonamentul anual e pentru persoane fizice. Pentru firme, alege intervenția de care ai nevoie.');
+    var consent = $('#b-consent');
+    if (!consent.checked) return bookError(consent, 'Bifează acordul ca să te putem suna.');
     if (!BOOKING_URL) {
       bookMsg.className = 'b-msg';
       bookMsg.textContent = 'Programarea online pornește la lansarea EuroVid. Datele tale nu au fost trimise nicăieri.';
@@ -685,15 +690,38 @@
     }
     bookMsg.className = 'b-msg';
     bookMsg.textContent = 'Se trimite…';
-    var data = {};
-    new FormData(book).forEach(function (v, k) { data[k] = v; });
+    var pj = $('#b-pj').checked;
+    var data = {
+      kind: pj ? 'pj' : 'pf',
+      name: name.value.trim(),
+      cui: pj ? $('#b-cui').value.trim() : '',
+      phone: tel,
+      address: loc.value.trim(),
+      service: svc.value,
+      serviceLabel: svc.options[svc.selectedIndex] ? svc.options[svc.selectedIndex].text : '',
+      preferredDate: $('#b-date').value,
+      details: $('#b-notes').value.trim(),
+      consent: true,
+      website: $('#b-website').value
+    };
     fetch(BOOKING_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
       .then(function (r) {
-        if (!r.ok) throw new Error(String(r.status));
-        book.reset(); bookWho();
-        bookMsg.textContent = 'Am primit programarea. Te sună asistentul să confirme prețul și ora.';
+        return r.json().catch(function () { return {}; }).then(function (body) {
+          if (!r.ok) {
+            var issues = body && body.issues && body.issues.fieldErrors;
+            var first = issues && Object.keys(issues).map(function (k) { return issues[k] && issues[k][0]; }).filter(Boolean)[0];
+            throw new Error(first || (r.status === 429 && body.message) || 'Nu s-a trimis. Încearcă din nou peste câteva secunde.');
+          }
+          return body;
+        });
       })
-      .catch(function () { bookMsg.className = 'b-msg is-err'; bookMsg.textContent = 'Nu s-a trimis. Încearcă din nou peste câteva secunde.'; });
+      .then(function (body) {
+        book.reset(); bookWho();
+        bookMsg.textContent = body && body.number
+          ? 'Am primit programarea, comanda #' + body.number + '. Te sunăm să confirmăm prețul și ora.'
+          : 'Am primit programarea. Te sunăm să confirmăm prețul și ora.';
+      })
+      .catch(function (err) { bookMsg.className = 'b-msg is-err'; bookMsg.textContent = err && err.message ? err.message : 'Nu s-a trimis. Încearcă din nou peste câteva secunde.'; });
   });
 
   /* ---------- Înregistrarea pentru colaboratori: pornește doar când e pe ecran ---------- */
